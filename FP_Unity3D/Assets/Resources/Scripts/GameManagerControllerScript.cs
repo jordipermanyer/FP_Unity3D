@@ -11,11 +11,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
     //s'ha modificat el monobehaviour per treballar amb photon
     public class GameManagerControllerScript : MonoBehaviourPunCallbacks
     {
+        //variables in game manager
+        public GameObject playerPrefab;
         string text = "";
         bool connecting = false;
         // Start is called before the first frame update
         void Start()
         {
+            Vector3 pos = new Vector3 (UnityEngine.Random.Range(-5,5), 0.5f, UnityEngine.Random.Range(-5, 5));
+            PhotonNetwork.Instantiate(playerPrefab.name,pos,Quaternion.identity);
             text += "You have joined the Arena\n";
         }
 
