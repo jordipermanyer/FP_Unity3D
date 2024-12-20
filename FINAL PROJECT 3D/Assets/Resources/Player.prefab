@@ -1533,6 +1533,8 @@ MonoBehaviour:
   speed: 5
   team: NoTeam
   text: 
+  jumpForce: 25
+  rotationSpeed: 720
 --- !u!114 &4491861649099566448
 MonoBehaviour:
   m_ObjectHideFlags: 0

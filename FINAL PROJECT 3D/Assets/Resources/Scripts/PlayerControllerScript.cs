@@ -13,15 +13,20 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public string team = "NoTeam"; // Team
         public string text = ""; // Text for the player info
 
-        private Rigidbody rb;
         private Animator animator;
         private Vector3 moveDir;
         private bool isGrounded;
         public float jumpForce = 25f;
 
+        private CharacterController controller;
+        private Vector3 movementDirection;
+
+        public float rotationSpeed = 220f; // Degrees per second
+        private Transform cameraTransform;
+
         void Start()
         {
-            rb = GetComponent<Rigidbody>();
+            controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
 
             if (!photonView.IsMine)
@@ -42,6 +47,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     text += "I'm on team Beta";
                 }
 
+            }
+
+            Camera playerCamera = GetComponentInChildren<Camera>();
+
+            if (playerCamera != null)
+            {
+                cameraTransform = playerCamera.transform;
+                Debug.Log("Camera successfully assigned from the player prefab.");
+            }
+            else
+            {
+                Debug.LogError("No camera found as a child of the player prefab!");
             }
         }
         // Update is called once per frame
@@ -70,54 +87,86 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         }
 
 
+
         /* LOGICA MOVIMENT */
 
         public void movment()
         {
-            /*
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
-            Vector3 movement = new Vector3(horizontal, 0, vertical);
-            transform.Translate(movement * speed * Time.deltaTime, Space.World);
-
-            // Rotación con el mouse (eje X)
-            float mouseX = Input.GetAxis("Mouse X");
-            if (Mathf.Abs(mouseX) > 0.01f)
-            {
-                transform.Rotate(Vector3.up, mouseX * speed * Time.deltaTime);
-            }
-            */
             GetInput();
             Jump();
-            UpdateAnimationState();
+            //UpdateAnimationState();
         }
 
         private void GetInput()
         {
-            float h = Input.GetAxis("Horizontal");
-            float v = Input.GetAxis("Vertical");
+            if (cameraTransform == null) return; // Prevent movement if cameraTransform is null
 
-            Vector3 targetVelocity = moveDir * speed;
-            if (!isGrounded && rb.velocity.y > 0)
+            // Get input
+            float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right Arrows
+            float vertical = Input.GetAxis("Vertical");     // W/S or Up/Down Arrows
+
+            // Combine input into a direction relative to the camera
+            Vector3 inputDirection = new Vector3(horizontal, 0f, vertical).normalized;
+
+            if (inputDirection.magnitude >= 0.1f)
             {
-                targetVelocity *= 0.9f; // Reduce speed a bit when moving upwards
+                // Calculate the movement direction relative to the camera
+                Vector3 moveDirection = cameraTransform.forward * inputDirection.z + cameraTransform.right * inputDirection.x;
+                moveDirection.y = 0f; // Ensure the character doesn't move vertically
+
+                // Move the player
+                transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
             }
 
-            rb.velocity = new Vector3(targetVelocity.x, rb.velocity.y, targetVelocity.z);
+            // Rotate the player based on mouse movement
+            RotatePlayerWithMouse();
         }
+
+        void RotatePlayerWithMouse()
+        {
+            // Get the mouse movement on the X-axis
+            float mouseX = Input.GetAxis("Mouse X");
+
+            float rotationAmount = mouseX * rotationSpeed * Time.deltaTime;
+
+            // Apply the rotation around the Y-axis (horizontal)
+            transform.Rotate(Vector3.up * rotationAmount);
+        }
+
 
         private void Jump()
         {
-            if (isGrounded && Input.GetButtonDown("Jump"))
-            {
-                rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z); // Reset vertical velocity before jumping
-                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // Apply jump force
-            }
+            
         }
 
         private void UpdateAnimationState()
         {
+            /*
+             ANIMTAIONS variable = state (Ignorar encara treballant)
+            Idle
+                1  normal
+                2  shooting
+                3  crouch
+            Walk
+                4 recte
+                5 esquerra
+                6 dreta
+                7 backwards
+            Run
+                8 Normal
+                9 Aiming (! disparar)
+            Shoot
+                10
+                11
+                   
+
+            Extra logic
+                Bool isJumping
+                Bool isDying
+
+             */
+
+
             if (moveDir == Vector3.zero && isGrounded) // Idle state
             {
                 animator.SetInteger("state", 0);
