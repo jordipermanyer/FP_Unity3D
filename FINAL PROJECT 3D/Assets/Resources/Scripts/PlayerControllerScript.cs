@@ -21,7 +21,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private CharacterController controller;
         private Vector3 movementDirection;
 
-        public float rotationSpeed = 220f; // Degrees per second
+        public float rotationSpeed = 30f; // Degrees per second
         private Transform cameraTransform;
 
         void Start()
@@ -141,6 +141,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void UpdateAnimationState()
         {
+            
             /*
              ANIMTAIONS variable = state (Ignorar encara treballant)
             Idle
