@@ -9,24 +9,32 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class PlayerControllerScript : MonoBehaviourPun,IPunObservable
     {
-        public float speed = 5.0f; // Speed of the player movement
+        
         public string team = "NoTeam"; // Team
         public string text = ""; // Text for the player info
 
+        //Movment
+        public float speed = 5.0f;
         private Animator animator;
         private Vector3 moveDir;
         private bool isGrounded;
         public float jumpForce = 25f;
 
-        private CharacterController controller;
-        private Vector3 movementDirection;
-
+        //Camera
         public float rotationSpeed = 30f; // Degrees per second
         private Transform cameraTransform;
 
+        //Animations
+        private float velX = 0.0f;
+        private float velZ = 0.0f;
+        public float acc = 2.0f;
+        public float decel = 2.0f;
+        public float maxWalkV = 0.5f;
+        public float maxRV = 2.0f;
+
+
         void Start()
         {
-            controller = GetComponent<CharacterController>();
             animator = GetComponent<Animator>();
 
             if (!photonView.IsMine)
@@ -94,18 +102,16 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             GetInput();
             Jump();
-            //UpdateAnimationState();
+            UpdateAnimationState();
         }
 
         private void GetInput()
         {
             if (cameraTransform == null) return; // Prevent movement if cameraTransform is null
 
-            // Get input
-            float horizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right Arrows
-            float vertical = Input.GetAxis("Vertical");     // W/S or Up/Down Arrows
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
 
-            // Combine input into a direction relative to the camera
             Vector3 inputDirection = new Vector3(horizontal, 0f, vertical).normalized;
 
             if (inputDirection.magnitude >= 0.1f)
@@ -114,8 +120,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 Vector3 moveDirection = cameraTransform.forward * inputDirection.z + cameraTransform.right * inputDirection.x;
                 moveDirection.y = 0f; // Ensure the character doesn't move vertically
 
-                // Move the player
                 transform.Translate(moveDirection * speed * Time.deltaTime, Space.World);
+                velX = Mathf.Lerp(velX, inputDirection.x, Time.deltaTime * acc);
+                velZ = Mathf.Lerp(velZ, inputDirection.z, Time.deltaTime * acc);
+            }
+            else
+            {
+                // Decelerate parameters smoothly
+                velX = Mathf.Lerp(velX, 0f, Time.deltaTime * decel);
+                velZ = Mathf.Lerp(velZ, 0f, Time.deltaTime * decel);
             }
 
             // Rotate the player based on mouse movement
@@ -126,7 +139,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             // Get the mouse movement on the X-axis
             float mouseX = Input.GetAxis("Mouse X");
-
             float rotationAmount = mouseX * rotationSpeed * Time.deltaTime;
 
             // Apply the rotation around the Y-axis (horizontal)
@@ -141,45 +153,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void UpdateAnimationState()
         {
-            
-            /*
-             ANIMTAIONS variable = state (Ignorar encara treballant)
-            Idle
-                1  normal
-                2  shooting
-                3  crouch
-            Walk
-                4 recte
-                5 esquerra
-                6 dreta
-                7 backwards
-            Run
-                8 Normal
-                9 Aiming (! disparar)
-            Shoot
-                10
-                11
-                   
-
-            Extra logic
-                Bool isJumping
-                Bool isDying
-
-             */
+            animator.SetFloat("VelocityX", velX);
+            animator.SetFloat("VelocityY", velZ);
 
 
-            if (moveDir == Vector3.zero && isGrounded) // Idle state
-            {
-                animator.SetInteger("state", 0);
-            }
-            else if (isGrounded) // Walking state
-            {
-                animator.SetInteger("state", 1);
-            }
-            else if (!isGrounded) // Jumping state
-            {
-                animator.SetInteger("state", 3);
-            }
         }
 
 
