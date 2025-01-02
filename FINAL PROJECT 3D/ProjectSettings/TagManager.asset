@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - warehouse
+  - Floor
+  - Wall
+  - Ceiling
   layers:
   - Default
   - TransparentFX

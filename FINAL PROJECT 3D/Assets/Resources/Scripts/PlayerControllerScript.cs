@@ -1,4 +1,4 @@
-using System.Collections;
+wusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;

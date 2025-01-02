@@ -958,9 +958,9 @@ MonoBehaviour:
   sprintSpeed: 13
   jumpForce: 25
   rotationSpeed: 720
-  cameraOffset: {x: 0.5, y: 1.5, z: -3}
   acc: 2
   decel: 2
+  health: 100
 --- !u!114 &3926714837679266566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1036,12 +1036,6 @@ MonoBehaviour:
   - Type: 1
     SynchronizeType: 2
     Name: VelocityY
-  - Type: 4
-    SynchronizeType: 2
-    Name: isWalking
-  - Type: 4
-    SynchronizeType: 2
-    Name: isRunning
   m_SynchronizeLayers:
   - SynchronizeType: 2
     LayerIndex: 0
