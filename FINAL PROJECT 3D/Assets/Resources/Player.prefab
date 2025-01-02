@@ -955,12 +955,12 @@ MonoBehaviour:
   team: NoTeam
   text: 
   speed: 5
+  sprintSpeed: 13
   jumpForce: 25
   rotationSpeed: 720
+  cameraOffset: {x: 0.5, y: 1.5, z: -3}
   acc: 2
   decel: 2
-  maxWalkV: 0.5
-  maxRV: 2
 --- !u!114 &3926714837679266566
 MonoBehaviour:
   m_ObjectHideFlags: 0
