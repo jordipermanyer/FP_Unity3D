@@ -1671,6 +1671,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2796068601526596500, guid: aae952dc76387e84287a598d901b120d, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 2796068601526596500, guid: aae952dc76387e84287a598d901b120d, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -4788,6 +4792,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 3926714838917462176, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
   spawnpoint: {fileID: 519787728}
+  alive: 0
 --- !u!1001 &206035670
 PrefabInstance:
   m_ObjectHideFlags: 0

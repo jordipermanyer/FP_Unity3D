@@ -32,8 +32,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             if (PhotonNetwork.IsConnected)
             {
-                player = GetClosestPlayer();
+                //player = GetClosestPlayer(); //Per main escena
+                player = GameObject.FindWithTag("Player").transform; //Per escene test
             }
+            player = GameObject.FindWithTag("Player").transform;
         }
 
         Transform GetClosestPlayer()
@@ -80,7 +82,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 // Stop moving and start shooting
                 agent.isStopped = true;
-                animator.SetInteger("state", 2);
+                animator.SetFloat("state", 2);
+                Debug.Log("Shooting");
 
                 if (!isShooting)
                 {
@@ -92,7 +95,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 // Chase the player
                 agent.isStopped = false;
                 agent.SetDestination(player.position);
-                animator.SetInteger("state", 1);
+                animator.SetFloat("state", 1);
             }
             else
             {
@@ -105,7 +108,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     wanderTimer = wanderInterval; // Reset the timer
                 }
 
-                animator.SetInteger("state", 0);
+                animator.SetFloat("state", 0);
             }
         }
 
@@ -183,7 +186,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 gameplayScript.enemyDeath();
             }
-            Destroy();
+            //Destroy();
         }
     }
 }
