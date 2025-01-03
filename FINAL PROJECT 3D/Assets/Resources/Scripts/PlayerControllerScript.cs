@@ -36,6 +36,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         //Player
         public float health = 100.0f;
+        private float score = 0f;
+        private bool isDead = false;
 
 
         void Start()
@@ -50,17 +52,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             else
             {
                 //defining the team of the local player
-                if (Random.Range(0f, 1f) < 0.5f) // 50% chance for each team
-                {
-                    team += "Team Alpha";
-                    text += "I'm on team Alpha";
-                }
-                else
-                {
-                    team += "Team Beta";
-                    text += "I'm on team Beta";
-                }
-
+                team += "Team Alpha";
+                text += "I'm on team Alpha";
             }
 
             Camera playerCamera = GetComponentInChildren<Camera>();
@@ -225,7 +218,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         void OnTriggerEnter(Collider other)
         {
             // Check if the player is colliding with the ground
-            if (!other.CompareTag("Player"))
+            if (other.CompareTag("Floor"))
             {
                 isGrounded = true;
                 Debug.Log("Player is grounded");
@@ -235,12 +228,44 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         void OnTriggerExit(Collider other)
         {
             // Check if the player has left the ground
-            if (!other.CompareTag("Player"))
+            if (other.CompareTag("Floor"))
             {
                 isGrounded = false;
                 Debug.Log("Player is not grounded");
             }
         }
+
+        public void TakeDamage(int damage)
+        {
+            if (isDead) return; // If the player is already dead, do nothing
+
+            health -= damage;
+
+            if (health <= 0)
+            {
+                Die();
+            }
+        }
+
+        // Handle player death
+        private void Die()
+        {
+            isDead = true;
+            lessPlayer();
+            
+        }
+
+        
+        private void lessPlayer()
+        {
+            GameManagerControllerScript gameManager = FindObjectOfType<GameManagerControllerScript>();
+            if (gameManager != null)
+            {
+                gameManager.OnPlayerDeath(); // Notify the game manager that this player has died
+            }
+        }
+
+
 
 
     }
