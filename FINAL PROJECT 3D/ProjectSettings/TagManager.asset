@@ -10,6 +10,8 @@ TagManager:
   - Ceiling
   - Spawn
   - Enemy
+  - Gun
+  - Bullet
   layers:
   - Default
   - TransparentFX
