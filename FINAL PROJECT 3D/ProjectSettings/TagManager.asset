@@ -12,6 +12,9 @@ TagManager:
   - Enemy
   - Gun
   - Bullet
+  - Spawnpoints
+  - Limit
+  - Stairs
   layers:
   - Default
   - TransparentFX

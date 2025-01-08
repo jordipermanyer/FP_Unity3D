@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEditor.PackageManager;
 
 
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
@@ -14,18 +15,19 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public string text = ""; // Text for the player info
 
         //Movment
-        public float speed = 7.0f;
-        public float sprintSpeed = 13.0f;
+        public float speed = 8.0f;
+        public float sprintSpeed = 11.5f;
         
         //Jump
         private bool isGrounded;
-        public float jumpForce = 1f;
+        public float jumpForce = 18f;
 
         //Camera
         public float rotationSpeed = 30f;
         private Transform cameraTransform;
         private Rigidbody rb;
         private Transform player;
+        private float verticalRotation = 0.0f;
 
         //Animations
         private Animator animator;
@@ -33,6 +35,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private float velZ = 0.0f;
         public float acc = 2.0f;
         public float decel = 2.0f;
+
+        private TakeDamageScript takeDamage;
 
         //Player
         public float health = 100.0f;
@@ -44,6 +48,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             player = transform;
             animator = GetComponent<Animator>();
+            takeDamage = GetComponent<TakeDamageScript>();
 
             if (!photonView.IsMine)
             {
@@ -71,8 +76,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
                 player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, Time.deltaTime * 5f);
-
-                Debug.Log("Camera successfully assigned from the player prefab.");
             }
             else
             {
@@ -92,6 +95,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (photonView.IsMine) //only moves if the player is yourself
             {
+                if (isDead) return;
                 movment();
                 shoot();
                 
@@ -120,6 +124,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         /* LOGICA MOVIMENT */
 
+
         public void movment()
         {
             GetInput();
@@ -145,13 +150,14 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 Vector3 moveDirection = cameraTransform.forward * inputDirection.z + cameraTransform.right * inputDirection.x;
                 moveDirection.y = 0f; // Ensure the character doesn't move vertically
 
-                transform.Translate(moveDirection * currentSpeed * Time.deltaTime, Space.World);
+                rb.velocity = new Vector3(moveDirection.x * currentSpeed, rb.velocity.y, moveDirection.z * currentSpeed);
 
                 velX = Mathf.Lerp(velX, inputDirection.x * (isSprinting ? 2.0f : 1.0f), Time.deltaTime * acc);
                 velZ = Mathf.Lerp(velZ, inputDirection.z * (isSprinting ? 2.0f : 1.0f), Time.deltaTime * acc);
             }
             else
             {
+                rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
                 // Decelerate parameters smoothly
                 velX = Mathf.Lerp(velX, 0f, Time.deltaTime * decel);
                 velZ = Mathf.Lerp(velZ, 0f, Time.deltaTime * decel);
@@ -163,12 +169,20 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void RotatePlayerWithMouse()
         {
-            // Get the mouse movement on the X-axis
+            // Get the mouse movement on the X-axis and rotate
             float mouseX = Input.GetAxis("Mouse X");
             float rotationAmount = mouseX * rotationSpeed * Time.deltaTime;
-
-            // Apply the rotation around the Y-axis (horizontal)
             transform.Rotate(Vector3.up * rotationAmount);
+
+
+            // Get the mouse movement on the Y-axis
+            float mouseY = Input.GetAxis("Mouse Y");
+            verticalRotation -= mouseY * rotationSpeed * Time.deltaTime * 0.8f;
+
+            // Prevent excessive movement
+            verticalRotation = Mathf.Clamp(verticalRotation, -20f, 20f);
+
+            cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
         }
 
 
@@ -179,7 +193,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 Debug.Log("Jump");
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // Apply a jump force upwards
-                
+                isGrounded = false;
             }
         }
 
@@ -201,68 +215,95 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                animator.SetBool("isShooting", true);
                 RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit))
+                if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100.0f))
                 {
-
                     Debug.Log("Raycast hit: " + hit.collider.name);
-
+                    if (hit.collider.CompareTag("Enemy"))
+                    {
+                        EnemyControllerScript enemyScript = hit.collider.GetComponent<EnemyControllerScript>();
+                        enemyScript.TakeDamage(10);
+                        
+                    }
                 }
+                StartCoroutine(StopShootingAnimation());
             }
+        }
+
+        private IEnumerator StopShootingAnimation()
+        {
+            // Assuming your shooting animation length is 0.5 seconds (adjust as needed)
+            yield return new WaitForSeconds(0.45f);
+            animator.SetBool("isShooting", false);
         }
 
 
 
-        void OnTriggerEnter(Collider other)
+        /* COLISIONS I ALTRES */
+
+
+
+        void OnCollisionEnter(Collision other)
         {
-            // Check if the player is colliding with the ground
-            if (other.CompareTag("Floor"))
+            if (other.gameObject.CompareTag("Floor"))
             {
                 isGrounded = true;
                 Debug.Log("Player is grounded");
             }
-        }
-
-        void OnTriggerExit(Collider other)
-        {
-            // Check if the player has left the ground
-            if (other.CompareTag("Floor"))
-            {
-                isGrounded = false;
-                Debug.Log("Player is not grounded");
-            }
-        }
-
-        public void TakeDamage(int damage)
-        {
-            if (isDead) return; // If the player is already dead, do nothing
-
-            health -= damage;
-
-            if (health <= 0)
+            else if (other.gameObject.CompareTag("Limit"))
             {
                 Die();
             }
         }
 
+        
+
+        public void TakeDamage(Vector3 hitDirection)
+        {
+            if (isDead) return; // If the player is already dead, do nothing
+            
+            health -= 50;
+            Debug.Log("Life: " + health);
+
+            if (health <= 0)
+            {
+                Die();
+            }
+            else
+            {
+                rb.AddForce(hitDirection * 10f, ForceMode.Impulse);
+                takeDamage.damageEffect(transform, 0.2f);
+            }
+        }
+
+        
+
         // Handle player death
         private void Die()
         {
             isDead = true;
-            lessPlayer();
+
+            animator.SetBool("isDying", true);
+
+            StartCoroutine(DeathAnimation());
+
             
+
         }
 
-        
-        private void lessPlayer()
+        private IEnumerator DeathAnimation()
         {
-            GameManagerControllerScript gameManager = FindObjectOfType<GameManagerControllerScript>();
-            if (gameManager != null)
+            animator.SetBool("isDying", true);
+            float deathAnimationLength = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
+            yield return new WaitForSeconds(deathAnimationLength);
+
+            //Destroy(gameObject);
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
-                gameManager.OnPlayerDeath(); // Notify the game manager that this player has died
-            }
+                { "IsAlive", false }
+            });
         }
 
 

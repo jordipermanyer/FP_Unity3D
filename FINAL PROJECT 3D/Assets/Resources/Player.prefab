@@ -36,9 +36,57 @@ PrefabInstance:
       propertyPath: ShowLayerWeightsInspector
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[1].Name
+      value: isJumping
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[1].Type
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[2].Name
+      value: isDying
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[3].Name
+      value: VelocityX
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[3].Type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[4].Name
+      value: VelocityY
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[5].Name
+      value: jumpSpeed
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[5].SynchronizeType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3926714837679266566, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
       propertyPath: sceneViewId
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266567, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: speed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266567, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: jumpForce
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266567, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: sprintSpeed
+      value: 11.5
       objectReference: {fileID: 0}
     - target: {fileID: 3926714838917162112, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
       propertyPath: m_RootOrder
@@ -86,10 +134,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3926714838917462176, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
       propertyPath: m_Name
-      value: Player Variant
+      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3926714838917462176, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2730659334284868481}
   m_SourcePrefab: {fileID: 100100000, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+--- !u!1 &5961453991983253250 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3926714838917462176, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+  m_PrefabInstance: {fileID: 7261254527831064482}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2730659334284868481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5961453991983253250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daeb52c977a51744b9fd9c1f71a9a1b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeMagnitude: 0.01
+  shakeDuration: 0.5

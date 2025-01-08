@@ -10,7 +10,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
     {
         // Enemy logic
         public GameObject enemyPrefab;
-        public int[] enemiesPerRound = { 10, 15, 20, 40 };
+        public int[] enemiesPerRound = { 3, 15, 20, 40 };
         public float spawnInterval = 2.5f; // Time between each spawn
         private int currentRound = 0;
 
@@ -19,14 +19,20 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         // Spawning
         private List<Transform> spawnPoints = new List<Transform>();
-        private List<GameObject> spawnedEnemies = new List<GameObject>();
+        private bool roundInProgress = true;
 
         private int enemiesToSpawn;
-        private Terrain terrain;
+        private int enemiesKilledRound = 0;
 
         void Start()
         {
-            terrain = GameObject.FindGameObjectWithTag("Terrain").GetComponent<Terrain>();
+            GameObject spawnPointsParent = GameObject.FindGameObjectWithTag("Spawnpoints");
+
+            foreach (Transform child in spawnPointsParent.transform)
+            {
+                spawnPoints.Add(child);
+            }
+
             StartNewRound();
         }
 
@@ -40,7 +46,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             currentRound++;
             enemiesToSpawn = enemiesPerRound[currentRound - 1];
-            spawnedEnemies.Clear();  // Clear the list of spawned enemies for the new round
+            enemiesKilledRound = 0;
             UpdateRoundText();
 
             // Start spawning enemies with a delay
@@ -58,87 +64,42 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void SpawnEnemy()
         {
-            bool spawnInsideBuilding = Random.value > 0.5f; // 50% chance to spawn inside the building
-            Vector3 spawnPosition;
 
-            if (spawnInsideBuilding)
-            {
-                spawnPosition = GetRandomPositionInsideBuilding();
-            }
-            else
-            {
-                spawnPosition = GetRandomPositionOnTerrain();
-            }
+            // Randomly select a spawn point
+            Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+            Vector3 spawnPosition = randomSpawnPoint.position;
 
+            // Instantiate the enemy at the selected spawn point
             GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            spawnedEnemies.Add(enemy);  // Add the enemy to the list of spawned enemies
         }
 
-        Vector3 GetRandomPositionOnTerrain()
-        {
-            // Generate a random position on the terrain
-            float xPos = Random.Range(0, terrain.terrainData.size.x);
-            float zPos = Random.Range(0, terrain.terrainData.size.z);
-            float yPos = terrain.SampleHeight(new Vector3(xPos, 0, zPos));
-            return new Vector3(xPos, yPos, zPos);
-        }
-
-        Vector3 GetRandomPositionInsideBuilding()
-        {
-            // Find all objects with the "Floor" tag inside the building
-            GameObject[] floorElements = GameObject.FindGameObjectsWithTag("Floor");
-
-            // Randomly select a floor element
-            GameObject randomFloor = floorElements[Random.Range(0, floorElements.Length)];
-            Collider floorCollider = randomFloor.GetComponent<Collider>();
-
-            if (floorCollider == null)
-            {
-                Debug.LogWarning("Selected floor element does not have a collider.");
-                return Vector3.zero;
-            }
-
-            Vector3 randomPosition = new Vector3(
-                Random.Range(floorCollider.bounds.min.x, floorCollider.bounds.max.x),
-                floorCollider.bounds.center.y, // Y is the center height of the floor element
-                Random.Range(floorCollider.bounds.min.z, floorCollider.bounds.max.z)
-            );
-
-            return randomPosition;
-        }
 
         void Update()
-        {
-            // Check if all enemies are dead
-            if (AllEnemiesDead())
-            {
-                // Wait a few seconds before starting the next round
-                if (spawnedEnemies.Count == enemiesToSpawn)
-                {
-                    Invoke("StartNewRound", 2f); // Delay the start of the next round
-                }
-            }
-        }
-
-        // Check if all enemies in the round are dead
-        bool AllEnemiesDead()
-        {
-            // Iterate through the list of spawned enemies and check if they're alive
-            foreach (GameObject enemy in spawnedEnemies)
-            {
-                if (enemy != null)  // If the enemy is still alive
-                {
-                    return false;  // Not all enemies are dead yet
-                }
-            }
-            return true;  // All enemies are dead
-        }
-
-        public void enemyDeath()
         {
             
         }
 
+        // Check if all enemies in the round are dead
+        
+
+        public void enemyDeath()
+        {
+            enemiesKilledRound++;
+
+            if (AllEnemiesDead() && roundInProgress)
+            {
+                roundInProgress = false;
+                Invoke("StartNewRound", 5f); // Delay the start of the next round
+            }
+        }
+        bool AllEnemiesDead()
+        {
+            if (enemiesKilledRound == enemiesToSpawn)
+            {
+                return true;
+            }
+            return false;
+        }
 
 
         // Update the round display on the UI

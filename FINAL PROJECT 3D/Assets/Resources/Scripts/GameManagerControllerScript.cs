@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using System;
+using System.Linq;
 
 //namespace es superior a classe
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
@@ -16,7 +17,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject spawnpoint;
         string text = "";
         bool connecting = false;
-        public int alive = 0;
 
         void Start()
         {
@@ -26,10 +26,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 0f,                                    
                 UnityEngine.Random.Range(-1.0f, 1.0f)  
             );
-            pos.y = 0.5f;
+            pos.y = 2f;
             PhotonNetwork.Instantiate(playerPrefab.name, pos, Quaternion.identity);
 
-            alive = PhotonNetwork.PlayerList.Length;
+            
             text += "You have joined the Arena\n";
         }
 
@@ -42,36 +42,22 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 PhotonNetwork.LeaveRoom();
                 Application.Quit();
             }
+
+            
+                CheckIfAllPlayersDead();
+            
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             text += "Player" + newPlayer.ActorNumber + " has joined the room.\n";
-            alive++;
         }
         public override void OnPlayerLeftRoom(Player newPlayer)
         {
             text += "Player" + newPlayer.ActorNumber + " has left the room.\n";
-            alive--;
-            CheckGameOver();
+
         }
 
-        public void OnPlayerDeath()
-        {
-            alive--;
-            CheckGameOver();
-        }
-
-        private void CheckGameOver()
-        {
-            Debug.Log("UN MENYS");
-            if (alive <= 0)
-            {
-                // Anar a escne game over
-                //PhotonNetwork.LoadLevel("GameOver");
-                Debug.Log("TOOOOOTS MORTS");
-            }
-        }
         public override void OnLeftRoom()
         {
             text += "Leaving the Arena...\n";
@@ -82,5 +68,31 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             GUI.TextArea(new Rect(20, 20, 300, 100), text);
         }
+
+
+        /* MORT */
+        public void CheckIfAllPlayersDead()
+        {
+
+            bool allDead = PhotonNetwork.PlayerList
+            .All(player => player.CustomProperties.ContainsKey("IsAlive") &&
+                           !(bool)player.CustomProperties["IsAlive"]);
+
+            if (allDead)
+            {
+                GameOver();
+            }
+
+        }
+
+        private void GameOver()
+        {
+
+            PhotonNetwork.LoadLevel("FinalScreen");
+
+        }
+
+
+
     }
 }

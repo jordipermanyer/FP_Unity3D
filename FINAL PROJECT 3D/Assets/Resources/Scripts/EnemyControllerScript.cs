@@ -22,7 +22,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private float wanderInterval = 3f; // Time interval between setting new wander destinations
         private float wanderTimer;
 
-        private float health;
+        private float health = 30;
 
         void Start()
         {
@@ -32,10 +32,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             if (PhotonNetwork.IsConnected)
             {
-                //player = GetClosestPlayer(); //Per main escena
-                player = GameObject.FindWithTag("Player").transform; //Per escene test
+                //player = GetClosestPlayer(); //Per escena principal CANVIAR VERSIO FINAL
             }
-            player = GameObject.FindWithTag("Player").transform;
+            player = GameObject.FindWithTag("Player").transform; //Per escenas test
         }
 
         Transform GetClosestPlayer()
@@ -83,7 +82,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 // Stop moving and start shooting
                 agent.isStopped = true;
                 animator.SetFloat("state", 2);
-                Debug.Log("Shooting");
+                //Debug.Log("Shooting");
 
                 if (!isShooting)
                 {
@@ -131,19 +130,16 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
 
             // Add randomness to the shooting direction
-            float spreadAngle = 5f;
+            float spreadAngle = 2f;
             directionToPlayer = ApplyRandomSpread(directionToPlayer, spreadAngle);
 
             if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, shootingRadius))
             {
                 if (hit.collider.CompareTag("Player"))
                 {
-                    Debug.Log("Player hit by raycast!");
-                    // Apply damage logic here
-                }
-                else
-                {
-                    Debug.Log("Missed the shot!");
+                    PlayerControllerScript playerScript = hit.collider.GetComponent<PlayerControllerScript>();
+                    playerScript.TakeDamage((hit.collider.transform.position - transform.position).normalized);
+
                 }
             }
 
@@ -178,7 +174,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
         }
 
-        // Handle player death
+        // Handle enemy death
         private void Die()
         {
             GameplayScript gameplayScript = FindObjectOfType<GameplayScript>();
@@ -186,7 +182,16 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 gameplayScript.enemyDeath();
             }
-            //Destroy();
+            StartCoroutine(DeathAnimation());
+        }
+
+        private IEnumerator DeathAnimation()
+        {
+            animator.SetBool("dying", true);
+            float deathAnimationLength = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
+            yield return new WaitForSeconds(deathAnimationLength);
+
+            Destroy(gameObject);
         }
     }
 }

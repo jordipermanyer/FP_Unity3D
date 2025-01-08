@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/ArenaScene.unity
     guid: b46e93ea8238cc342977f4a402558553
   - enabled: 1
-    path: Assets/Resources/Scenes/GameOverScene.unity
+    path: Assets/Resources/Scenes/FinalScreen.unity
     guid: 9c25f73b6fd71534baee1a56ce16c82e
   m_configObjects: {}

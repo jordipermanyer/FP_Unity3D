@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System;
 
+
 //namespace es superior a classe
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
