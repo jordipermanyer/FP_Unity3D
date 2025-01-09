@@ -33,6 +33,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void Start()
         {
+            UpdateRoundText();
             if (PhotonNetwork.IsMasterClient)
             {
                 // Master client is responsible for spawning enemies
