@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
@@ -11,9 +10,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
     {
         // Enemy logic
         public GameObject enemyPrefab;
-        public int[] enemiesPerRound = { 3, 15, 20, 40 };
+        private int[] enemiesPerRound = { 3, 3, 3, 3 }; // Number of enemies per round
         public float spawnInterval = 2.5f; // Time between each spawn
-        public static int currentRound = 0;
+        public static int currentRound = 0; // Current round number
 
         // Text
         public TMP_Text roundText;
@@ -36,6 +35,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (PhotonNetwork.IsMasterClient)
             {
+                // Master client is responsible for spawning enemies
                 GameObject spawnPointsParent = GameObject.FindGameObjectWithTag("Spawnpoints");
                 foreach (Transform child in spawnPointsParent.transform)
                 {
@@ -53,21 +53,22 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 return;
             }
 
+            roundInProgress = true;
+
             currentRound++;
             enemiesToSpawn = enemiesPerRound[currentRound - 1];
             enemiesKilledRound = 0;
 
+            // Update the round text and notify all clients (but only master client spawns)
             photonView.RPC("UpdateRoundTextRPC", RpcTarget.All, currentRound);
 
-            // Start spawning enemies with a delay
-            //StartCoroutine(SpawnEnemiesWithDelay());
-            photonView.RPC("StartSpawningEnemies", RpcTarget.All);
-        }
+            Debug.LogWarning($"Starting Round {currentRound}, Enemies to spawn: {enemiesToSpawn}");
 
-        [PunRPC]
-        void StartSpawningEnemies()
-        {
-            StartCoroutine(SpawnEnemiesWithDelay());
+            // Master client handles enemy spawning
+            if (PhotonNetwork.IsMasterClient)
+            {
+                StartCoroutine(SpawnEnemiesWithDelay());
+            }
         }
 
         IEnumerator SpawnEnemiesWithDelay()
@@ -81,7 +82,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void SpawnEnemy()
         {
-
             // Randomly select a spawn point
             Transform randomSpawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
             Vector3 spawnPosition = randomSpawnPoint.position;
@@ -90,32 +90,14 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             PhotonNetwork.Instantiate(enemyPrefab.name, spawnPosition, Quaternion.identity);
         }
 
-
-        void Update()
-        {
-            
-        }
-
-        // Check if all enemies in the round are dead
-        
-
         public void enemyDeath()
         {
-            enemiesKilledRound++;
-
-            if (AllEnemiesDead() && roundInProgress)
-            {
-                roundInProgress = false;
-                Invoke("StartNewRound", 5f); // Delay the start of the next round
-            }
+            photonView.RPC("EnemyKilledRPC", RpcTarget.All);
         }
+
         bool AllEnemiesDead()
         {
-            if (enemiesKilledRound == enemiesToSpawn)
-            {
-                return true;
-            }
-            return false;
+            return enemiesKilledRound == enemiesToSpawn;
         }
 
         [PunRPC]
@@ -125,14 +107,35 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             UpdateRoundText();
         }
 
+        [PunRPC]
+        void EnemyKilledRPC()
+        {
+            enemiesKilledRound++;
+            UpdateRoundText(); // Update the UI to show the number of enemies killed
+
+            // Check if all enemies in the round are dead and notify the master client to handle round progression
+            if (AllEnemiesDead() && PhotonNetwork.IsMasterClient)
+            {
+                Debug.LogWarning("All enemies are dead, starting new round...");
+                photonView.RPC("StartNewRoundRPC", RpcTarget.All); // Notify all players to start the next round
+            }
+        }
+
+        [PunRPC]
+        void StartNewRoundRPC()
+        {
+            Debug.LogWarning("RPC: Starting new round on all clients.");
+            // Call the round start logic on all clients (but only the master client should do the spawning)
+            StartNewRound();
+        }
 
         // Update the round display on the UI
         void UpdateRoundText()
         {
             if (roundText != null)
             {
-                //roundText.text = "Round: " + currentRound;
-                roundText.text = "Round: " + enemiesKilledRound;
+                roundText.text = "Round: " + currentRound + "\n";
+                roundText.text += "Killed:  " + enemiesKilledRound;
             }
         }
     }

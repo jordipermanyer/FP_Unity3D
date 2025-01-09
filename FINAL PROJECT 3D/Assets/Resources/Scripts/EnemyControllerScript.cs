@@ -23,6 +23,17 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private float wanderTimer;
 
         private float health = 30;
+        private PhotonView photonView;
+
+        private float updateInterval = 1f; // Update every 1 second
+        private float timeSinceLastUpdate = 0f;
+
+        private bool isDying = false;
+
+        void Awake()
+        {
+            photonView = GetComponent<PhotonView>();
+        }
 
         void Start()
         {
@@ -32,9 +43,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             if (PhotonNetwork.IsConnected)
             {
-                //player = GetClosestPlayer(); //Per escena principal CANVIAR VERSIO FINAL
+                player = GetClosestPlayer(); //Per escena principal CANVIAR VERSIO FINAL
+                timeSinceLastUpdate = 0f;
             }
-            player = GameObject.FindWithTag("Player").transform; //Per escenas test
+            //player = GameObject.FindWithTag("Player").transform; //Per escenas test
+           
         }
 
         Transform GetClosestPlayer()
@@ -45,9 +58,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             // Loop through all Photon players in the game
             foreach (Player photonPlayer in PhotonNetwork.PlayerList)
             {
+                
                 // Get the PhotonView attached to the player
                 PhotonView photonView = photonPlayer.TagObject as PhotonView;
-
                 if (photonView != null)
                 {
                     GameObject playerObj = photonView.gameObject;  // Get the player GameObject
@@ -75,6 +88,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void Update()
         {
+            timeSinceLastUpdate += Time.deltaTime;
+
+            // Update closest player at a regular interval
+            if (timeSinceLastUpdate >= updateInterval)
+            {
+                player = GetClosestPlayer();
+                timeSinceLastUpdate = 0f;
+            }
+
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
             if (distanceToPlayer <= shootingRadius)
@@ -82,7 +104,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 // Stop moving and start shooting
                 agent.isStopped = true;
                 animator.SetFloat("state", 2);
-                //Debug.Log("Shooting");
+                
 
                 if (!isShooting)
                 {
@@ -109,10 +131,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 animator.SetFloat("state", 0);
             }
+            if (photonView.IsMine) // Only the owner of the object will send the position update
+            {
+                photonView.RPC("SyncPosition", RpcTarget.Others, transform.position);
+            }
         }
 
         void WanderRandomly()
         {
+            // Generate a random destination only for the owner of the enemy
             Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
             randomDirection += transform.position;
 
@@ -120,8 +147,27 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (NavMesh.SamplePosition(randomDirection, out navHit, wanderRadius, NavMesh.AllAreas))
             {
                 agent.SetDestination(navHit.position);
+                photonView.RPC("SyncWanderDestination", RpcTarget.Others, navHit.position); // Sync the wander destination across all clients
             }
         }
+
+        // This is the RPC to sync the wander destination across all clients
+        [PunRPC]
+        void SyncWanderDestination(Vector3 destination)
+        {
+            if (!photonView.IsMine) // Only non-owner clients will receive the new destination
+            {
+                agent.SetDestination(destination);
+            }
+        }
+
+        [PunRPC]
+        public void SyncPosition(Vector3 position)
+        {
+            // Sync the position on other clients
+            transform.position = position;
+        }
+
 
         IEnumerator ShootPlayer()
         {
@@ -163,26 +209,34 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
 
 
-
+        [PunRPC]
         public void TakeDamage(int damage)
         {
+            if (!photonView.IsMine) return; // Prevents clients from modifying health of others
+
+            if (isDying) return;
 
             health -= damage;
             if (health <= 0)
             {
-                Die();
+                photonView.RPC("Die", RpcTarget.All); // Notify all clients that the enemy has died
             }
         }
 
+        [PunRPC]
         // Handle enemy death
         private void Die()
         {
-            GameplayScript gameplayScript = FindObjectOfType<GameplayScript>();
-            if (gameplayScript != null)
+            if (health <= 0)
             {
-                gameplayScript.enemyDeath();
+                isDying = true;
+                GameplayScript gameplayScript = FindObjectOfType<GameplayScript>();
+                if (gameplayScript != null)
+                {
+                    gameplayScript.enemyDeath();
+                }
+                StartCoroutine(DeathAnimation());
             }
-            StartCoroutine(DeathAnimation());
         }
 
         private IEnumerator DeathAnimation()
