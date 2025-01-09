@@ -212,14 +212,16 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         [PunRPC]
         public void TakeDamage(int damage)
         {
-            if (!photonView.IsMine) return; // Prevents clients from modifying health of others
-
-            if (isDying) return;
-
-            health -= damage;
-            if (health <= 0)
+            if (PhotonNetwork.IsMasterClient)
             {
-                photonView.RPC("Die", RpcTarget.All); // Notify all clients that the enemy has died
+                health -= damage;
+                //Debug.Log($"Enemy took {damage} damage. Remaining health: {health}");
+
+                if (health <= 0)
+                {
+                    PhotonView photonView = GetComponent<PhotonView>();
+                    photonView.RPC("Die", RpcTarget.All); // Broadcast death to all clients
+                }
             }
         }
 
@@ -227,7 +229,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Handle enemy death
         private void Die()
         {
-            if (health <= 0)
+            if (PhotonNetwork.IsMasterClient)
             {
                 isDying = true;
                 GameplayScript gameplayScript = FindObjectOfType<GameplayScript>();
@@ -235,8 +237,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 {
                     gameplayScript.enemyDeath();
                 }
-                StartCoroutine(DeathAnimation());
             }
+                StartCoroutine(DeathAnimation());
+            
         }
 
         private IEnumerator DeathAnimation()

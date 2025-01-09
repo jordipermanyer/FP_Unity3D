@@ -223,8 +223,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     if (hit.collider.CompareTag("Enemy"))
                     {
                         EnemyControllerScript enemyScript = hit.collider.GetComponent<EnemyControllerScript>();
-                        enemyScript.TakeDamage(10);
-                        
+                        PhotonView enemyPhotonView = enemyScript.GetComponent<PhotonView>();
+                        enemyPhotonView.RPC("TakeDamage", RpcTarget.All, 10);
+
                     }
                 }
                 StartCoroutine(StopShootingAnimation());
@@ -257,7 +258,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
         }
 
-        
 
         public void TakeDamage(Vector3 hitDirection)
         {
