@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -24,16 +25,24 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private int enemiesToSpawn;
         private int enemiesKilledRound = 0;
 
+        private PhotonView photonView;
+
+        void Awake()
+        {
+            photonView = GetComponent<PhotonView>();
+        }
+
         void Start()
         {
-            GameObject spawnPointsParent = GameObject.FindGameObjectWithTag("Spawnpoints");
-
-            foreach (Transform child in spawnPointsParent.transform)
+            if (PhotonNetwork.IsMasterClient)
             {
-                spawnPoints.Add(child);
+                GameObject spawnPointsParent = GameObject.FindGameObjectWithTag("Spawnpoints");
+                foreach (Transform child in spawnPointsParent.transform)
+                {
+                    spawnPoints.Add(child);
+                }
+                StartNewRound();
             }
-
-            StartNewRound();
         }
 
         void StartNewRound()
@@ -47,7 +56,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             currentRound++;
             enemiesToSpawn = enemiesPerRound[currentRound - 1];
             enemiesKilledRound = 0;
-            UpdateRoundText();
+
+            photonView.RPC("UpdateRoundTextRPC", RpcTarget.All, currentRound);
 
             // Start spawning enemies with a delay
             StartCoroutine(SpawnEnemiesWithDelay());
@@ -70,7 +80,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             Vector3 spawnPosition = randomSpawnPoint.position;
 
             // Instantiate the enemy at the selected spawn point
-            GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+            PhotonNetwork.Instantiate(enemyPrefab.name, spawnPosition, Quaternion.identity);
         }
 
 
@@ -99,6 +109,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 return true;
             }
             return false;
+        }
+
+        [PunRPC]
+        void UpdateRoundTextRPC(int round)
+        {
+            currentRound = round;
+            UpdateRoundText();
         }
 
 

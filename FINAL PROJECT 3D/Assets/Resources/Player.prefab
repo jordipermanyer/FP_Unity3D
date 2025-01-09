@@ -132,7 +132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
       propertyPath: m_SynchronizeParameters.Array.size
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
       propertyPath: m_SynchronizeParameters.Array.data[1].Name
@@ -161,6 +161,14 @@ PrefabInstance:
     - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
       propertyPath: m_SynchronizeParameters.Array.data[5].Name
       value: jumpSpeed
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[6].Name
+      value: isShooting
+      objectReference: {fileID: 0}
+    - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
+      propertyPath: m_SynchronizeParameters.Array.data[6].Type
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3926714837679266562, guid: 294f4f15a38c6a544bd0dbf329353932, type: 3}
       propertyPath: m_SynchronizeParameters.Array.data[5].SynchronizeType
