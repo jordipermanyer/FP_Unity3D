@@ -258,7 +258,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
         }
 
-        
 
         public void TakeDamage(Vector3 hitDirection)
         {
