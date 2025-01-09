@@ -15,6 +15,7 @@ TagManager:
   - Spawnpoints
   - Limit
   - Stairs
+  - WorldWall
   layers:
   - Default
   - TransparentFX
