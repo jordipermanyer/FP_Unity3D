@@ -13,7 +13,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject menuPanel;        // Main menu panel
         public Button joinRoomButton;      // Join Room button
         public Button quitButton;          // Quit button
-        public Text statusText;            // Status text display
+        private string text = "";            // Status text display
 
         private bool connecting = false;   // Connection state
 
@@ -24,7 +24,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             quitButton.onClick.AddListener(QuitGame);
 
             menuPanel.SetActive(true);     // Show the menu initially
-            statusText.text = "Welcome! Click 'Join' to enter the game.";
+            text = "Welcome! Click 'Join' to enter the game.";
         }
 
         // Called when the Join Room button is clicked
@@ -34,18 +34,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 if (PhotonNetwork.InLobby)
                 {
-                    statusText.text = "Joining room...";
+                    text = "Joining room...";
                     PhotonNetwork.JoinRoom("Lobby"); // Attempt to join the predefined room
                 }
                 else
                 {
-                    statusText.text = "Not in a lobby yet. Trying to join lobby...";
+                    text = "Not in a lobby yet. Trying to join lobby...";
                     PhotonNetwork.JoinLobby(); // Ensure we're in the lobby
                 }
             }
             else
             {
-                statusText.text = "Not connected. Connecting...";
+                text = "Not connected. Connecting...";
                 Connect(); // Call the Connect function if not already connected
             }
         }
@@ -56,7 +56,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (!PhotonNetwork.IsConnected)
             {
                 connecting = true;
-                statusText.text = "Connecting to server...";
+                text = "Connecting to server...";
                 PhotonNetwork.ConnectUsingSettings();
                 PhotonNetwork.GameVersion = "1";
             }
@@ -68,7 +68,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (connecting)
             {
                 connecting = false;
-                statusText.text = "Connected! Joining lobby...";
+                text = "Connected! Joining lobby...";
                 PhotonNetwork.JoinLobby(); // Move to the lobby first
             }
         }
@@ -76,14 +76,14 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Called when successfully joined a lobby
         public override void OnJoinedLobby()
         {
-            statusText.text = "Joined lobby. Now joining the room...";
+            text = "Joined lobby. Now joining the room...";
             PhotonNetwork.JoinRoom("Lobby"); // Join the room once the lobby is joined
         }
 
         // Called when the room join attempt fails
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
-            statusText.text = "Room not found. Creating a new room...";
+            text = "Room not found. Creating a new room...";
             PhotonNetwork.CreateRoom("Lobby"); // Create the room if it doesn't exist
         }
 
@@ -97,8 +97,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Quit the game when Quit button is clicked
         private void QuitGame()
         {
-            statusText.text = "Exiting the game...";
+            text = "Exiting the game...";
             Application.Quit();
+        }
+
+        private void OnGUI()
+        {
+            GUI.TextArea(new Rect(20, 20, 300, 100), text);
         }
     }
 }

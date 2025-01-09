@@ -15,7 +15,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         
         public GameObject playerPrefab;
         public GameObject spawnpoint;
-        string text = "";
+
         bool connecting = false;
 
         void Start()
@@ -37,8 +37,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 PhotonNetwork.LocalPlayer.TagObject = photonView; // Store the PhotonView in TagObject
             }
 
-
-            text += "You have joined the Arena\n";
         }
 
         // Update is called once per frame
@@ -56,26 +54,12 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             
         }
 
-        public override void OnPlayerEnteredRoom(Player newPlayer)
-        {
-            text += "Player" + newPlayer.ActorNumber + " has joined the room.\n";
-        }
-        public override void OnPlayerLeftRoom(Player newPlayer)
-        {
-            text += "Player" + newPlayer.ActorNumber + " has left the room.\n";
-
-        }
 
         public override void OnLeftRoom()
         {
-            text += "Leaving the Arena...\n";
             PhotonNetwork.LoadLevel("Launcher");
         }
 
-        private void OnGUI()
-        {
-            GUI.TextArea(new Rect(20, 20, 300, 100), text);
-        }
 
 
         /* MORT */

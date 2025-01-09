@@ -12,7 +12,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
     {
         //Photon Team
         public string team = "NoTeam"; // Team
-        public string text = ""; // Text for the player info
+
 
         //Movment
         public float speed = 8.0f;
@@ -54,13 +54,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 transform.GetChild(0).gameObject.SetActive(false); //disable camera
             }
-            else
-            {
-                //defining the team of the local player
-                team += "Team Alpha";
-                text += "I'm on team Alpha";
-            }
-
+            
             Camera playerCamera = GetComponentInChildren<Camera>();
 
             if (playerCamera != null)
@@ -113,13 +107,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 team = (string)stream.ReceiveNext();
             }
         }
-        private void OnGUI()
-        {
-            GUI.TextArea(new Rect(20, 120, 300, 100), text);
-        }
-
-
-
 
 
         /* LOGICA MOVIMENT */
