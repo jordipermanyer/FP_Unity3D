@@ -13,7 +13,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject enemyPrefab;
         public int[] enemiesPerRound = { 3, 15, 20, 40 };
         public float spawnInterval = 2.5f; // Time between each spawn
-        private int currentRound = 0;
+        public static int currentRound = 0;
 
         // Text
         public TMP_Text roundText;
@@ -60,6 +60,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             photonView.RPC("UpdateRoundTextRPC", RpcTarget.All, currentRound);
 
             // Start spawning enemies with a delay
+            //StartCoroutine(SpawnEnemiesWithDelay());
+            photonView.RPC("StartSpawningEnemies", RpcTarget.All);
+        }
+
+        [PunRPC]
+        void StartSpawningEnemies()
+        {
             StartCoroutine(SpawnEnemiesWithDelay());
         }
 
@@ -124,7 +131,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (roundText != null)
             {
-                roundText.text = "Round: " + currentRound;
+                //roundText.text = "Round: " + currentRound;
+                roundText.text = "Round: " + enemiesKilledRound;
             }
         }
     }
