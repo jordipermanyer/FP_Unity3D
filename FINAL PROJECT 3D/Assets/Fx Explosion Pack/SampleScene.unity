@@ -178,8 +178,10 @@ MonoBehaviour:
   - {fileID: 100004, guid: 82019e923dca94848916b96b8f98a352, type: 3}
   - {fileID: 100012, guid: f3a153ef01a92d04dbdf22d8f0dcaa56, type: 3}
   - {fileID: 100012, guid: 1f1aa87040db08846a4332981b0a6fa7, type: 3}
+  i: 0
   Text: {fileID: 448521582}
   mg: {fileID: 349122110}
+  MakedObject: {fileID: 0}
 --- !u!1 &448521581
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,6 +333,8 @@ MonoBehaviour:
   ySpeed: 120
   yMinLimit: 5
   yMaxLimit: 15
+  x: 0
+  y: 0
   CameraDist: 10
 --- !u!1 &765886447
 GameObject:

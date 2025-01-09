@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.61975574, z: 0}
+  m_LocalPosition: {x: 0, y: 1.0491529, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -44,7 +44,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0.9191176, g: 0.5514706, b: 0, a: 1}
+  m_Color: {r: 0.9191176, g: 0.39934075, b: 0, a: 1}
   m_Intensity: 2
   m_Range: 8
   m_SpotAngle: 30
@@ -4953,7 +4953,7 @@ GameObject:
   - component: {fileID: 400004}
   - component: {fileID: 11400002}
   m_Layer: 0
-  m_Name: Exploson7
+  m_Name: Exploson6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5001,7 +5001,7 @@ GameObject:
   - component: {fileID: 19800002}
   - component: {fileID: 19900002}
   m_Layer: 0
-  m_Name: Exposion-[Explosion5]
+  m_Name: Exposion-[Explosion4]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5276,7 +5276,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 3
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -9760,7 +9760,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 095a9a9bdbe55fe48924c6da7076dc7f, type: 2}
+  - {fileID: 2100000, guid: 10c03057446632e47841790eaaf2e302, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
