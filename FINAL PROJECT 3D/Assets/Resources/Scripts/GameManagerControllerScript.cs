@@ -27,9 +27,17 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 UnityEngine.Random.Range(-1.0f, 1.0f)  
             );
             pos.y = 2f;
-            PhotonNetwork.Instantiate(playerPrefab.name, pos, Quaternion.identity);
+            GameObject playerObject = PhotonNetwork.Instantiate(playerPrefab.name, pos, Quaternion.identity);
 
-            
+            // Get the PhotonView attached to the instantiated player
+            PhotonView photonView = playerObject.GetComponent<PhotonView>();
+            // Assign the PhotonView to the player's TagObject
+            if (photonView != null)
+            {
+                PhotonNetwork.LocalPlayer.TagObject = photonView; // Store the PhotonView in TagObject
+            }
+
+
             text += "You have joined the Arena\n";
         }
 

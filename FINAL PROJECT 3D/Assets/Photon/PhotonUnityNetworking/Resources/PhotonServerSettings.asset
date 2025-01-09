@@ -41,6 +41,12 @@ MonoBehaviour:
   - RespawnSpaceship
   - UpdateRoundTextRPC
   - StartSpawningEnemies
+  - SyncPosition
+  - SyncWanderDestination
+  - TakeDamage
+  - Die
+  - EnemyKilledRPC
+  - StartNewRoundRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
