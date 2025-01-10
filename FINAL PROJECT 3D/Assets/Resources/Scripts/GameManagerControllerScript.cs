@@ -46,7 +46,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 PhotonNetwork.LeaveRoom();
                 Application.Quit();
             }
-                CheckIfAllPlayersDead();
+            CheckIfAllPlayersDead();
         }
 
 
@@ -74,6 +74,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void GameOver()
         {
+            PhotonNetwork.Disconnect();
 
             PhotonNetwork.LoadLevel("FinalScreen");
 

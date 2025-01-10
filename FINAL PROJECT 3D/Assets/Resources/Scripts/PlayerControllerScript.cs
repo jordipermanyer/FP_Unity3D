@@ -41,7 +41,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public float health = 100.0f;
         private float score = 0f;
         private bool isDead = false;
-        private int killCount = 0;
+        public static int killCount = 0;
 
         //Shooting
         private int bulletCount = 50;

@@ -91,6 +91,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public override void OnJoinedRoom()
         {
             menuPanel.SetActive(false); // Hide the menu panel
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "IsAlive", true }
+            });
+            //PlayerControllerScript.killCount = 0;
             PhotonNetwork.LoadLevel("ArenaScene");
         }
 
