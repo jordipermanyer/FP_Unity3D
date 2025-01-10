@@ -5,15 +5,23 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class Gun : MonoBehaviour
     {
-        public Transform bulletSpawnPoint;
-        public GameObject bulletPrefab;
-        public float bulletSpeed = 10f;
-        public float fireRate = 0.2f; // Frecuencia de disparo en segundos
+        [Header("Puntos de referencia")]
+        public Transform bulletSpawnPoint; // Transform donde se genera la bala
+        
+        [Header("Prefabs")]
+        public GameObject bulletPrefab;    // Prefab de la bala
+        
+        [Header("Parámetros de disparo")]
+        [Tooltip("Velocidad de la bala")]
+        public float bulletSpeed = 50f;
+        [Tooltip("Frecuencia de disparo (segundos entre cada disparo)")]
+        public float fireRate = 0.2f;
 
         private float nextFireTime = 0f;
 
         void Update()
         {
+            // Dispara con la tecla Espacio y respeta la cadencia (fireRate)
             if (Input.GetKeyDown(KeyCode.Space) && Time.time > nextFireTime)
             {
                 Shoot();
@@ -24,10 +32,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         void Shoot()
         {
             GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+
+            // Obtener el Rigidbody de la bala
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                bullet.transform.Rotate(new Vector3(90f, 0f, 0f));
+                
+                // Asignamos la velocidad directamente en la dirección 'forward' de bulletSpawnPoint
                 rb.velocity = bulletSpawnPoint.forward * bulletSpeed;
             }
         }
