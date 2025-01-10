@@ -108,6 +108,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 if (!isShooting)
                 {
+                    if (isDying) return;
                     StartCoroutine(ShootPlayer());
                 }
             }
@@ -171,6 +172,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         IEnumerator ShootPlayer()
         {
+            
             isShooting = true;
 
             Vector3 directionToPlayer = (player.position - transform.position).normalized;
@@ -210,8 +212,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
 
         [PunRPC]
-        public void TakeDamage(int damage)
+        public void TakeDamage(int damage, string playerId)
         {
+            if (isDying) return;
             if (PhotonNetwork.IsMasterClient)
             {
                 health -= damage;
@@ -219,8 +222,29 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 if (health <= 0)
                 {
-                    PhotonView photonView = GetComponent<PhotonView>();
                     photonView.RPC("Die", RpcTarget.All); // Broadcast death to all clients
+                    ReportKillToPlayer(playerId);
+                }
+            }
+        }
+
+        private void ReportKillToPlayer(string playerId)
+        {
+            // Find the player by their ID and increment their kill count
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                if (player.UserId == playerId)
+                {
+                    GameObject playerObject = player.TagObject as GameObject;
+                    if (playerObject != null)
+                    {
+                        PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
+                        if (playerController != null)
+                        {
+                            playerController.AddKill();
+                        }
+                    }
+                    break;
                 }
             }
         }
@@ -231,14 +255,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                isDying = true;
+                
                 GameplayScript gameplayScript = FindObjectOfType<GameplayScript>();
                 if (gameplayScript != null)
                 {
                     gameplayScript.enemyDeath();
                 }
             }
-                StartCoroutine(DeathAnimation());
+            isDying = true;
+            StartCoroutine(DeathAnimation());
             
         }
 

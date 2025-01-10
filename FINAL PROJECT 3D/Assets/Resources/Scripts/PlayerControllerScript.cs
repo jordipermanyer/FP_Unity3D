@@ -42,6 +42,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public float health = 100.0f;
         private float score = 0f;
         private bool isDead = false;
+        private int killCount = 0;
 
 
         void Start()
@@ -211,7 +212,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     {
                         EnemyControllerScript enemyScript = hit.collider.GetComponent<EnemyControllerScript>();
                         PhotonView enemyPhotonView = enemyScript.GetComponent<PhotonView>();
-                        enemyPhotonView.RPC("TakeDamage", RpcTarget.All, 10);
+                        enemyPhotonView.RPC("TakeDamage", RpcTarget.All, 10, PhotonNetwork.LocalPlayer.UserId);
 
                     }
                 }
@@ -275,8 +276,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             StartCoroutine(DeathAnimation());
 
-            
-
         }
 
         private IEnumerator DeathAnimation()
@@ -293,6 +292,17 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             });
         }
 
+
+
+        public void AddKill()
+        {
+            killCount++;
+        }
+
+        public int GetKills()
+        {
+            return killCount;
+        }
 
 
 

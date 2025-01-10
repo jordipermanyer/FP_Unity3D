@@ -19,7 +19,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         // Spawning
         private List<Transform> spawnPoints = new List<Transform>();
-        private bool roundInProgress = true;
 
         private int enemiesToSpawn;
         private int enemiesKilledRound = 0;
@@ -54,22 +53,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 return;
             }
 
-            roundInProgress = true;
-
             currentRound++;
             enemiesToSpawn = enemiesPerRound[currentRound - 1];
             enemiesKilledRound = 0;
 
-            // Update the round text and notify all clients (but only master client spawns)
-            photonView.RPC("UpdateRoundTextRPC", RpcTarget.All, currentRound);
+            photonView.RPC("SyncGameInfoRPC", RpcTarget.All, currentRound, enemiesToSpawn, enemiesKilledRound); //Sync all players with usefull info
 
-            Debug.LogWarning($"Starting Round {currentRound}, Enemies to spawn: {enemiesToSpawn}");
-
-            // Master client handles enemy spawning
-            if (PhotonNetwork.IsMasterClient)
-            {
-                StartCoroutine(SpawnEnemiesWithDelay());
-            }
+            StartCoroutine(SpawnEnemiesWithDelay());
         }
 
         IEnumerator SpawnEnemiesWithDelay()
@@ -91,9 +81,29 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             PhotonNetwork.Instantiate(enemyPrefab.name, spawnPosition, Quaternion.identity);
         }
 
+
         public void enemyDeath()
         {
-            photonView.RPC("EnemyKilledRPC", RpcTarget.All);
+            if (PhotonNetwork.IsMasterClient)
+            {
+                enemiesKilledRound++;
+                photonView.RPC("SyncGameInfoRPC", RpcTarget.All, currentRound, enemiesToSpawn, enemiesKilledRound); //Sync all players with usefull info
+
+                if (AllEnemiesDead())
+                {
+                    StartNewRound();
+                }
+            }
+        }
+
+
+        [PunRPC]
+        void SyncGameInfoRPC(int round, int toSpawn, int killed)
+        {
+            currentRound = round;
+            enemiesToSpawn = toSpawn;
+            enemiesKilledRound = killed;
+            UpdateRoundText();
         }
 
         bool AllEnemiesDead()
@@ -101,43 +111,41 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             return enemiesKilledRound == enemiesToSpawn;
         }
 
-        [PunRPC]
-        void UpdateRoundTextRPC(int round)
-        {
-            currentRound = round;
-            UpdateRoundText();
-        }
-
-        [PunRPC]
-        void EnemyKilledRPC()
-        {
-            enemiesKilledRound++;
-            UpdateRoundText(); // Update the UI to show the number of enemies killed
-
-            // Check if all enemies in the round are dead and notify the master client to handle round progression
-            if (AllEnemiesDead() && PhotonNetwork.IsMasterClient)
-            {
-                Debug.LogWarning("All enemies are dead, starting new round...");
-                photonView.RPC("StartNewRoundRPC", RpcTarget.All); // Notify all players to start the next round
-            }
-        }
-
-        [PunRPC]
-        void StartNewRoundRPC()
-        {
-            Debug.LogWarning("RPC: Starting new round on all clients.");
-            // Call the round start logic on all clients (but only the master client should do the spawning)
-            StartNewRound();
-        }
-
         // Update the round display on the UI
         void UpdateRoundText()
         {
+            
             if (roundText != null)
             {
                 roundText.text = "Round: " + currentRound + "\n";
                 roundText.text += "Killed:  " + enemiesKilledRound;
             }
+
+            /*
+            if (roundText != null)
+            {
+                // Iterate through all players to get their kill counts
+                foreach (var player in PhotonNetwork.PlayerList)
+                {
+                    Debug.LogWarningFormat("Aqui1");
+                    GameObject playerObject = player.TagObject as GameObject;
+                    if (playerObject != null)
+                    {
+                        Debug.LogWarningFormat("Aqui2");
+                        PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
+                        if (playerController != null)
+                        {
+                            Debug.LogWarningFormat("Aqui3");
+                            roundText.text += "Player x" + playerController.GetKills() + "\n";
+
+                            
+                        }
+                    }
+                }
+
+                
+            }*/
         }
+
     }
 }
