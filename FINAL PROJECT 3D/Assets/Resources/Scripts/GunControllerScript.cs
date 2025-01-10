@@ -21,8 +21,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void Update()
         {
-            // Dispara con la tecla Espacio y respeta la cadencia (fireRate)
-            if (Input.GetKeyDown(KeyCode.Space) && Time.time > nextFireTime)
+                // Dispara con la tecla Espacio y respeta la cadencia (fireRate)
+                if (Input.GetMouseButtonDown(0) && Time.time > nextFireTime)
             {
                 Shoot();
                 nextFireTime = Time.time + fireRate;

@@ -41,8 +41,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public float health = 100.0f;
         private float score = 0f;
         private bool isDead = false;
-        public static int killCount = 0;
-
+        public int killCount = 0;
         //Shooting
         private int bulletCount = 50;
         private bool canShoot = true;
@@ -87,6 +86,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 rb.freezeRotation = true; // Lock all rotations
             }
+
+
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "killCount", killCount }
+            });
+
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "IsAlive", true }
+            });
         }
 
         // Update is called once per frame
@@ -256,7 +267,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (isDead) return; // If the player is already dead, do nothing
             
-            health -= 20;
+            health -= 150;
 
             if (health <= 0)
             {
@@ -299,6 +310,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public void AddKill()
         {
             killCount++;
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "killCount", killCount }
+            });
             bulletCount += 5;
         }
 

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using static System.Net.Mime.MediaTypeNames;
 using UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
@@ -21,7 +22,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             reJoin.onClick.AddListener(ReJoinRoom);
             quitButton.onClick.AddListener(QuitGame);
 
-            killsText.text = "Score: " + PlayerControllerScript.killCount;
+            if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("killCount"))
+            {
+                int killCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["killCount"];
+                killsText.text = "Score: " + killCount;
+            }
         }
 
 

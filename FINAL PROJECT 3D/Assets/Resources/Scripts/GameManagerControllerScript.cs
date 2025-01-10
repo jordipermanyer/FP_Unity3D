@@ -15,9 +15,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         
         public GameObject playerPrefab;
         public GameObject spawnpoint;
+        private bool theyDead = false;
+
+        private GameplayScript gamscript;
 
         void Start()
         {
+            gamscript = FindObjectOfType<GameplayScript>();
             Vector3 pos = spawnpoint.transform.position;
             pos += new Vector3(
                 UnityEngine.Random.Range(-1.0f, 1.0f),
@@ -60,6 +64,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         /* MORT */
         public void CheckIfAllPlayersDead()
         {
+            if (theyDead) return;
 
             bool allDead = PhotonNetwork.PlayerList
             .All(player => player.CustomProperties.ContainsKey("IsAlive") &&
@@ -67,6 +72,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             if (allDead)
             {
+                theyDead = true;
                 GameOver();
             }
 
@@ -74,7 +80,12 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void GameOver()
         {
-            PhotonNetwork.Disconnect();
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "IsAlive", true }
+            });
+            gamscript.resetScene();
+            PhotonNetwork.LeaveRoom();
 
             PhotonNetwork.LoadLevel("FinalScreen");
 

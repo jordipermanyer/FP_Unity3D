@@ -59,26 +59,32 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             // Loop through all Photon players in the game
             foreach (Player photonPlayer in PhotonNetwork.PlayerList)
             {
-                
-                // Get the PhotonView attached to the player
-                PhotonView photonView = photonPlayer.TagObject as PhotonView;
-                if (photonView != null)
-                {
-                    GameObject playerObj = photonView.gameObject;  // Get the player GameObject
+                if(photonPlayer.CustomProperties.ContainsKey("IsAlive") &&
+                           (bool)photonPlayer.CustomProperties["IsAlive"]){
 
-                    // Ensure the player object exists and isn't this enemy
-                    if (playerObj != null && playerObj != gameObject)
+                    // Get the PhotonView attached to the player
+                    PhotonView photonView = photonPlayer.TagObject as PhotonView;
+                    if (photonView != null)
                     {
-                        float distance = Vector3.Distance(transform.position, playerObj.transform.position);
+                        GameObject playerObj = photonView.gameObject;  // Get the player GameObject
 
-                        // Track the closest player
-                        if (distance < closestDistance)
+                        // Ensure the player object exists and isn't this enemy
+                        if (playerObj != null && playerObj != gameObject)
                         {
-                            closestDistance = distance;
-                            closestPlayer = playerObj.transform;
+                            float distance = Vector3.Distance(transform.position, playerObj.transform.position);
+
+                            // Track the closest player
+                            if (distance < closestDistance)
+                            {
+                                closestDistance = distance;
+                                closestPlayer = playerObj.transform;
+                            }
                         }
                     }
+
+
                 }
+                
             }
 
             return closestPlayer;
@@ -97,6 +103,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 player = GetClosestPlayer();
                 timeSinceLastUpdate = 0f;
             }
+            if (player == null) return;
 
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 

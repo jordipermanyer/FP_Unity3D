@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class GameplayScript : MonoBehaviour
@@ -12,7 +13,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject enemyPrefab;
         private int[] enemiesPerRound = { 3, 3, 3, 3 }; // Number of enemies per round
         public float spawnInterval = 2.5f; // Time between each spawn
-        public static int currentRound = 0; // Current round number
+        public int currentRound = 0; // Current round number
 
         // Text
         public TMP_Text roundText;
@@ -67,6 +68,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             for (int i = 0; i < enemiesToSpawn; i++)
             {
                 SpawnEnemy();
+                photonView.RPC("SyncGameInfoRPC", RpcTarget.All, currentRound, enemiesToSpawn, enemiesKilledRound);
                 yield return new WaitForSeconds(spawnInterval);  // Delay between each spawn
             }
         }
@@ -144,6 +146,20 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 
             }
+        }
+
+        public void resetScene()
+        {
+            // Reset round and enemy-related variables
+            currentRound = 0;
+
+            // Reset any other game state variables
+            enemiesToSpawn = 0;
+            enemiesKilledRound = 0;
+
+            // Update the UI for the round display
+            UpdateRoundText();
+
         }
 
     }
