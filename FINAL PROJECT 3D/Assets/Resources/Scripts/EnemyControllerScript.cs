@@ -23,16 +23,17 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private float wanderTimer;
 
         private float health = 30;
-        private PhotonView photonView;
+        private PhotonView photonViewEnemy;
 
         private float updateInterval = 1f; // Update every 1 second
         private float timeSinceLastUpdate = 0f;
 
         private bool isDying = false;
 
+
         void Awake()
         {
-            photonView = GetComponent<PhotonView>();
+            photonViewEnemy = GetComponent<PhotonView>();
         }
 
         void Start()
@@ -101,14 +102,23 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             if (distanceToPlayer <= shootingRadius)
             {
-                // Stop moving and start shooting
-                agent.isStopped = true;
-                animator.SetFloat("state", 2);
-                
-
                 if (!isShooting)
                 {
                     if (isDying) return;
+
+                    Vector3 directionToPlayerFlat = new Vector3(player.position.x - transform.position.x, 0, player.position.z - transform.position.z);
+                    if (directionToPlayerFlat != Vector3.zero)
+                    {
+                        Quaternion targetRotation = Quaternion.LookRotation(directionToPlayerFlat);
+                        if (Quaternion.Angle(transform.rotation, targetRotation) > 5f)
+                        {
+                            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+                            return; // Wait until rotation aligns before shooting
+                        }
+                    }
+
+                    agent.isStopped = true;
+                    animator.SetFloat("state", 2);
                     StartCoroutine(ShootPlayer());
                 }
             }
@@ -132,9 +142,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 animator.SetFloat("state", 0);
             }
-            if (photonView.IsMine) // Only the owner of the object will send the position update
+            if (photonViewEnemy.IsMine) // Only the owner of the object will send the position update
             {
-                photonView.RPC("SyncPosition", RpcTarget.Others, transform.position);
+                photonViewEnemy.RPC("SyncPosition", RpcTarget.Others, transform.position);
             }
         }
 
@@ -148,7 +158,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (NavMesh.SamplePosition(randomDirection, out navHit, wanderRadius, NavMesh.AllAreas))
             {
                 agent.SetDestination(navHit.position);
-                photonView.RPC("SyncWanderDestination", RpcTarget.Others, navHit.position); // Sync the wander destination across all clients
+                photonViewEnemy.RPC("SyncWanderDestination", RpcTarget.Others, navHit.position); // Sync the wander destination across all clients
             }
         }
 
@@ -156,7 +166,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         [PunRPC]
         void SyncWanderDestination(Vector3 destination)
         {
-            if (!photonView.IsMine) // Only non-owner clients will receive the new destination
+            if (!photonViewEnemy.IsMine) // Only non-owner clients will receive the new destination
             {
                 agent.SetDestination(destination);
             }
@@ -222,7 +232,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 if (health <= 0)
                 {
-                    photonView.RPC("Die", RpcTarget.All); // Broadcast death to all clients
                     ReportKillToPlayer(playerId);
                 }
             }
@@ -235,13 +244,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 if (player.UserId == playerId)
                 {
-                    GameObject playerObject = player.TagObject as GameObject;
-                    if (playerObject != null)
+                    PhotonView photonView = player.TagObject as PhotonView; ;
+                    if (photonView != null)
                     {
+                        GameObject playerObject = photonView.gameObject;
                         PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
                         if (playerController != null)
                         {
                             playerController.AddKill();
+                            photonViewEnemy.RPC("Die", RpcTarget.All);
                         }
                     }
                     break;

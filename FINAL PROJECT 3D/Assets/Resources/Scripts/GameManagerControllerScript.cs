@@ -16,8 +16,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject playerPrefab;
         public GameObject spawnpoint;
 
-        bool connecting = false;
-
         void Start()
         {
             Vector3 pos = spawnpoint.transform.position;
@@ -48,10 +46,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 PhotonNetwork.LeaveRoom();
                 Application.Quit();
             }
-
-            
                 CheckIfAllPlayersDead();
-            
         }
 
 

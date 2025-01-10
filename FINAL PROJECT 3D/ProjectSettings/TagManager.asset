@@ -16,6 +16,7 @@ TagManager:
   - Limit
   - Stairs
   - WorldWall
+  - CameraHolder
   layers:
   - Default
   - TransparentFX

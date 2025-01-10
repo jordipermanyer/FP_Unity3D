@@ -13,7 +13,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         //Photon Team
         public string team = "NoTeam"; // Team
 
-
         //Movment
         public float speed = 8.0f;
         public float sprintSpeed = 11.5f;
@@ -44,6 +43,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private bool isDead = false;
         private int killCount = 0;
 
+        //Shooting
+        private int bulletCount = 50;
+        private bool canShoot = true;
+        public float shootCooldown = 0.45f;
+
 
         void Start()
         {
@@ -55,7 +59,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 transform.GetChild(0).gameObject.SetActive(false); //disable camera
             }
-            
+
             Camera playerCamera = GetComponentInChildren<Camera>();
 
             if (playerCamera != null)
@@ -108,6 +112,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 team = (string)stream.ReceiveNext();
             }
         }
+
+
+
+
 
 
         /* LOGICA MOVIMENT */
@@ -187,22 +195,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void UpdateAnimationState()
         {
-            if (isGrounded)
-            {
-                animator.SetBool("isJumping", false);
-            }
-            else
-            {
-                animator.SetBool("isJumping", true);
-            }
+            animator.SetBool("isJumping", !isGrounded);
             animator.SetFloat("VelocityX", velX);
             animator.SetFloat("VelocityY", velZ);
         }
 
         private void shoot()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && canShoot && bulletCount > 0)
             {
+                bulletCount--;
+                canShoot = false;
+
                 animator.SetBool("isShooting", true);
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100.0f))
@@ -223,13 +227,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private IEnumerator StopShootingAnimation()
         {
             // Assuming your shooting animation length is 0.5 seconds (adjust as needed)
-            yield return new WaitForSeconds(0.45f);
+            yield return new WaitForSeconds(shootCooldown);
             animator.SetBool("isShooting", false);
+            canShoot = true;
         }
 
 
 
-        /* COLISIONS I ALTRES */
+
+        /* COLISIONS I ATAC */
 
 
 
@@ -238,7 +244,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (other.gameObject.CompareTag("Floor"))
             {
                 isGrounded = true;
-                Debug.Log("Player is grounded");
             }
             else if (other.gameObject.CompareTag("Limit"))
             {
@@ -251,8 +256,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (isDead) return; // If the player is already dead, do nothing
             
-            health -= 50;
-            Debug.Log("Life: " + health);
+            health -= 20;
 
             if (health <= 0)
             {
@@ -266,8 +270,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         }
 
         
-
-        // Handle player death
         private void Die()
         {
             isDead = true;
@@ -297,6 +299,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public void AddKill()
         {
             killCount++;
+            bulletCount += 5;
         }
 
         public int GetKills()

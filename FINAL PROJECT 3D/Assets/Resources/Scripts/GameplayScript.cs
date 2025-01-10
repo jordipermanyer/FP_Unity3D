@@ -114,37 +114,36 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Update the round display on the UI
         void UpdateRoundText()
         {
-            
-            if (roundText != null)
-            {
-                roundText.text = "Round: " + currentRound + "\n";
-                roundText.text += "Killed:  " + enemiesKilledRound;
-            }
+           
+            roundText.text = "Round: " + currentRound + "\n";
 
-            /*
             if (roundText != null)
             {
                 // Iterate through all players to get their kill counts
                 foreach (var player in PhotonNetwork.PlayerList)
                 {
-                    Debug.LogWarningFormat("Aqui1");
-                    GameObject playerObject = player.TagObject as GameObject;
-                    if (playerObject != null)
+                    if (player.IsLocal)
                     {
-                        Debug.LogWarningFormat("Aqui2");
-                        PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
-                        if (playerController != null)
+                        PhotonView photonView = player.TagObject as PhotonView;
+                        if (photonView != null)
                         {
-                            Debug.LogWarningFormat("Aqui3");
-                            roundText.text += "Player x" + playerController.GetKills() + "\n";
-
-                            
+                            GameObject playerObject = photonView.gameObject;  // Get the player GameObject
+                            if (playerObject != null)
+                            {
+                                PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
+                                roundText.text += "Kills" + playerController.GetKills();
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarningFormat("Aqui1 - PhotonView not found for player: " + player.NickName);
                         }
                     }
+
                 }
 
                 
-            }*/
+            }
         }
 
     }
