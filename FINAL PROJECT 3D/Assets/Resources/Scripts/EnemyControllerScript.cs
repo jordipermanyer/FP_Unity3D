@@ -192,7 +192,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
 
             // Wait for 3 seconds before allowing another shot
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(1f);
 
             isShooting = false;
         }

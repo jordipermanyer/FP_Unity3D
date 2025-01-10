@@ -2042,6 +2042,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8911123174686793608, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911123174686793608, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
       objectReference: {fileID: 0}
@@ -2052,6 +2056,10 @@ PrefabInstance:
     - target: {fileID: 8911123174686793610, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_TagString
       value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911123174686793612, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8911123174686793700, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_Name
@@ -2084,6 +2092,14 @@ PrefabInstance:
       value: Corridor T 02 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 3354483237132092402, guid: ad6aae32dd3eb844fa75e2a156bbe34f, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3354483237132092404, guid: ad6aae32dd3eb844fa75e2a156bbe34f, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3354483237132092410, guid: ad6aae32dd3eb844fa75e2a156bbe34f, type: 3}
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
@@ -4669,12 +4685,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6205427424512901989, guid: 0ef31cdbe65a2f142beeb86422e34425, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6205427424512901989, guid: 0ef31cdbe65a2f142beeb86422e34425, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6205427424512901993, guid: 0ef31cdbe65a2f142beeb86422e34425, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 6205427424512901993, guid: 0ef31cdbe65a2f142beeb86422e34425, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6205427424512901995, guid: 0ef31cdbe65a2f142beeb86422e34425, type: 3}
+      propertyPath: m_TagString
+      value: Floor
       objectReference: {fileID: 0}
     - target: {fileID: 6205427424512901999, guid: 0ef31cdbe65a2f142beeb86422e34425, type: 3}
       propertyPath: m_Name
@@ -6622,6 +6650,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
+    - target: {fileID: 2528018916317293351, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
     - target: {fileID: 2528018916317293401, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
@@ -6763,6 +6795,10 @@ PrefabInstance:
       value: Corridor Tile 01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2528018916317293347, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 2528018916317293351, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
@@ -8779,6 +8815,10 @@ PrefabInstance:
     - target: {fileID: 4975399993979019661, guid: d324de115c4dff845bee7b7f166883c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935417351677981081, guid: d324de115c4dff845bee7b7f166883c4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 6935417351677981081, guid: d324de115c4dff845bee7b7f166883c4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12888,6 +12928,10 @@ PrefabInstance:
       value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 6935417351677981081, guid: d324de115c4dff845bee7b7f166883c4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 6935417351677981081, guid: d324de115c4dff845bee7b7f166883c4, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.6053192
       objectReference: {fileID: 0}
@@ -14225,7 +14269,7 @@ GameObject:
   - component: {fileID: 555036061}
   m_Layer: 0
   m_Name: WorldLimit
-  m_TagString: Limit
+  m_TagString: Floor
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24837,6 +24881,14 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
+    - target: {fileID: 2528018916317293351, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 2528018916317293401, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
     - target: {fileID: 2528018916317293401, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
@@ -28498,6 +28550,10 @@ PrefabInstance:
       value: Corridor Corner
       objectReference: {fileID: 0}
     - target: {fileID: 8911123174686793610, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911123174686793612, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
@@ -34455,6 +34511,14 @@ PrefabInstance:
       value: Corridor Tile 01
       objectReference: {fileID: 0}
     - target: {fileID: 2528018916317293347, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 2528018916317293351, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 2528018916317293401, guid: c4470bf28fca8044dab507d047e88c69, type: 3}
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
@@ -40501,6 +40565,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8911123174686793608, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911123174686793608, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
       objectReference: {fileID: 0}
@@ -40509,6 +40577,10 @@ PrefabInstance:
       value: Corridor Corner
       objectReference: {fileID: 0}
     - target: {fileID: 8911123174686793610, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911123174686793612, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
@@ -42374,6 +42446,14 @@ PrefabInstance:
       value: Corridor Cross Section 02
       objectReference: {fileID: 0}
     - target: {fileID: 8508690697080748130, guid: dcbf59da08760fb4b9531995a6691a6f, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508690697080748132, guid: dcbf59da08760fb4b9531995a6691a6f, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8508690697080748138, guid: dcbf59da08760fb4b9531995a6691a6f, type: 3}
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
@@ -47481,12 +47561,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3361326707275342324, guid: cc5db88956188ec4e99ecccc1cc1a855, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3361326707275342324, guid: cc5db88956188ec4e99ecccc1cc1a855, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3361326707275342328, guid: cc5db88956188ec4e99ecccc1cc1a855, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3361326707275342328, guid: cc5db88956188ec4e99ecccc1cc1a855, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3361326707275342330, guid: cc5db88956188ec4e99ecccc1cc1a855, type: 3}
+      propertyPath: m_TagString
+      value: Floor
       objectReference: {fileID: 0}
     - target: {fileID: 3361326707275342334, guid: cc5db88956188ec4e99ecccc1cc1a855, type: 3}
       propertyPath: m_Name
@@ -49254,6 +49346,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8911123174686793608, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911123174686793608, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 8
       objectReference: {fileID: 0}
@@ -49262,6 +49358,10 @@ PrefabInstance:
       value: Corridor Corner
       objectReference: {fileID: 0}
     - target: {fileID: 8911123174686793610, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
+      propertyPath: m_TagString
+      value: Floor
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911123174686793612, guid: 0caa079a07bb6bb4d8189cbe94d69429, type: 3}
       propertyPath: m_TagString
       value: Floor
       objectReference: {fileID: 0}
