@@ -59,8 +59,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             // Loop through all Photon players in the game
             foreach (Player photonPlayer in PhotonNetwork.PlayerList)
             {
-                if(photonPlayer.CustomProperties.ContainsKey("IsAlive") &&
-                           (bool)photonPlayer.CustomProperties["IsAlive"]){
+                
 
                     // Get the PhotonView attached to the player
                     PhotonView photonView = photonPlayer.TagObject as PhotonView;
@@ -71,17 +70,19 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                         // Ensure the player object exists and isn't this enemy
                         if (playerObj != null && playerObj != gameObject)
                         {
-                            float distance = Vector3.Distance(transform.position, playerObj.transform.position);
-
-                            // Track the closest player
-                            if (distance < closestDistance)
+                            PlayerControllerScript playerScript = playerObj.GetComponent<PlayerControllerScript>();
+                            if (playerScript != null && !playerScript.isD())
                             {
-                                closestDistance = distance;
-                                closestPlayer = playerObj.transform;
+                                float distance = Vector3.Distance(transform.position, playerObj.transform.position);
+
+                                // Track the closest player
+                                if (distance < closestDistance)
+                                {
+                                    closestDistance = distance;
+                                    closestPlayer = playerObj.transform;
+                                }
                             }
                         }
-                    }
-
 
                 }
                 
@@ -105,10 +106,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
             if (player == null) return;
 
-
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-            if (distanceToPlayer <= shootingRadius)
+            PlayerControllerScript playerScript = player.GetComponent<PlayerControllerScript>();
+
+            if (distanceToPlayer <= shootingRadius && !playerScript.isD())
             {
                 if (!isShooting)
                 {
@@ -130,7 +132,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     StartCoroutine(ShootPlayer());
                 }
             }
-            else if (distanceToPlayer <= detectionRadius)
+            else if (distanceToPlayer <= detectionRadius && !playerScript.isD())
             {
                 // Chase the player
                 agent.isStopped = false;
@@ -252,11 +254,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 if (player.UserId == playerId)
                 {
-                    PhotonView photonView = player.TagObject as PhotonView; ;
+                    GameObject photonView = player.TagObject as GameObject;
                     if (photonView != null)
                     {
-                        GameObject playerObject = photonView.gameObject;
-                        PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
+                        PlayerControllerScript playerController = photonView.GetComponent<PlayerControllerScript>();
                         if (playerController != null)
                         {
                             playerController.AddKill();

@@ -82,10 +82,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
                 player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, Time.deltaTime * 5f);
             }
-            else
-            {
-                Debug.LogError("No camera found as a child of the player prefab!");
-            }
 
             //Evitar bugs camera rotation
             rb = GetComponent<Rigidbody>();
@@ -202,10 +198,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void Jump()
         {
-            //Debug.Log("Is Grounded: " + isGrounded);
             if (isGrounded && Input.GetKeyDown(KeyCode.Space)) // Only jump if grounded
             {
-                Debug.Log("Jump");
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // Apply a jump force upwards
                 isGrounded = false;
             }
@@ -304,7 +298,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             animator.SetBool("isDying", true);
             float deathAnimationLength = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
-            yield return new WaitForSeconds(deathAnimationLength);
+            yield return new WaitForSeconds(deathAnimationLength + 1.0f * Time.deltaTime);
 
             //Destroy(gameObject);
 
@@ -324,12 +318,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 { "killCount", killCount }
             });
             bulletCount += 5;
+            if (bulletCount > 50) bulletCount = 50;
             gameUIManager.UpdateBullets(bulletCount);
         }
 
         public int GetKills()
         {
             return killCount;
+        }
+
+        public bool isD()
+        {
+            return isDead;
         }
 
 
