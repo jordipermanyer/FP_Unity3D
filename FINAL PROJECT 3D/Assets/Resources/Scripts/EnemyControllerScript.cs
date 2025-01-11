@@ -105,6 +105,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
             if (player == null) return;
 
+
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
             if (distanceToPlayer <= shootingRadius)

@@ -5248,6 +5248,7 @@ GameObject:
   - component: {fileID: 201330836}
   - component: {fileID: 201330837}
   - component: {fileID: 201330838}
+  - component: {fileID: 201330839}
   m_Layer: 0
   m_Name: GameManagerController
   m_TagString: Untagged
@@ -5298,7 +5299,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 6977046984969823536, guid: bd56675dc6491874394e5ccc3a221f16, type: 3}
   spawnInterval: 2.5
-  currentRound: 0
   roundText: {fileID: 1974822711}
 --- !u!114 &201330838
 MonoBehaviour:
@@ -5322,6 +5322,22 @@ MonoBehaviour:
   sceneViewId: 1
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &201330839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201330834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 528e444656d6a3543933f62a4b8340a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthText: {fileID: 994301397}
+  bulletsText: {fileID: 640304661}
+  enemiesText: {fileID: 1747881463}
+  roundText: {fileID: 1974822711}
 --- !u!1001 &206035670
 PrefabInstance:
   m_ObjectHideFlags: 0

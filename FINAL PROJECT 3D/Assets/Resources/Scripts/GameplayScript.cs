@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,13 +8,13 @@ using UnityEngine;
 
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
-    public class GameplayScript : MonoBehaviour
+    public class GameplayScript : MonoBehaviourPunCallbacks
     {
         // Enemy logic
         public GameObject enemyPrefab;
         private int[] enemiesPerRound = { 3, 3, 3, 3 }; // Number of enemies per round
         public float spawnInterval = 2.5f; // Time between each spawn
-        public int currentRound = 0; // Current round number
+        public static int currentRound = 0; // Current round number
 
         // Text
         public TMP_Text roundText;
@@ -24,15 +25,24 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private int enemiesToSpawn;
         private int enemiesKilledRound = 0;
 
-        private PhotonView photonView;
+        private UIManagerScript gameUIManager;
 
-        void Awake()
-        {
-            photonView = GetComponent<PhotonView>();
-        }
 
         void Start()
         {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                resetScene();
+            }
+
+                gameUIManager = FindObjectOfType<UIManagerScript>();
+            gameUIManager.UpdateEnemies(enemiesToSpawn - enemiesKilledRound);
+            gameUIManager.UpdateRound(currentRound);
+
             UpdateRoundText();
             if (PhotonNetwork.IsMasterClient)
             {
@@ -105,6 +115,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             currentRound = round;
             enemiesToSpawn = toSpawn;
             enemiesKilledRound = killed;
+
             UpdateRoundText();
         }
 
@@ -113,53 +124,59 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             return enemiesKilledRound == enemiesToSpawn;
         }
 
+
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // Synchronize game state with the new player
+                photonView.RPC("SyncGameInfoRPC", newPlayer, currentRound, enemiesToSpawn, enemiesKilledRound);
+            }
+        }
+
+
+
         // Update the round display on the UI
         void UpdateRoundText()
         {
-           
-            roundText.text = "Round: " + currentRound + "\n";
+            /*
+             roundText.text = "Round: " + currentRound + "\n";
 
-            if (roundText != null)
-            {
-                // Iterate through all players to get their kill counts
-                foreach (var player in PhotonNetwork.PlayerList)
-                {
-                    if (player.IsLocal)
-                    {
-                        PhotonView photonView = player.TagObject as PhotonView;
-                        if (photonView != null)
-                        {
-                            GameObject playerObject = photonView.gameObject;  // Get the player GameObject
-                            if (playerObject != null)
-                            {
-                                PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
-                                roundText.text += "Kills" + playerController.GetKills();
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarningFormat("Aqui1 - PhotonView not found for player: " + player.NickName);
-                        }
-                    }
+             if (roundText != null)
+             {
+                 // Iterate through all players to get their kill counts
+                 foreach (var player in PhotonNetwork.PlayerList)
+                 {
+                     if (player.IsLocal)
+                     {
+                         PhotonView photonView = player.TagObject as PhotonView;
+                         if (photonView != null)
+                         {
+                             GameObject playerObject = photonView.gameObject;  // Get the player GameObject
+                             if (playerObject != null)
+                             {
+                                 PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
+                                 roundText.text += "Kills" + playerController.GetKills();
+                             }
+                         }
+                         else
+                         {
+                             Debug.LogWarningFormat("Aqui1 - PhotonView not found for player: " + player.NickName);
+                         }
+                     }
 
-                }
+                 }
 
-                
-            }
+
+             }*/
+            gameUIManager.UpdateEnemies(enemiesToSpawn - enemiesKilledRound);
+            gameUIManager.UpdateRound(currentRound);
         }
 
         public void resetScene()
         {
-            // Reset round and enemy-related variables
             currentRound = 0;
-
-            // Reset any other game state variables
-            enemiesToSpawn = 0;
             enemiesKilledRound = 0;
-
-            // Update the UI for the round display
-            UpdateRoundText();
-
         }
 
     }

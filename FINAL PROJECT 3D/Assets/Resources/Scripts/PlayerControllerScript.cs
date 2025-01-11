@@ -4,6 +4,8 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEditor.PackageManager;
+using Photon.Pun.Demo.PunBasics;
+using Photon.Pun.Demo.Asteroids;
 
 
 namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
@@ -38,14 +40,16 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private TakeDamageScript takeDamage;
 
         //Player
-        public float health = 100.0f;
-        private float score = 0f;
+        public int health = 100;
         private bool isDead = false;
         public int killCount = 0;
+
         //Shooting
         private int bulletCount = 50;
         private bool canShoot = true;
         public float shootCooldown = 0.45f;
+
+        private UIManagerScript gameUIManager;
 
 
         void Start()
@@ -53,6 +57,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             player = transform;
             animator = GetComponent<Animator>();
             takeDamage = GetComponent<TakeDamageScript>();
+            gameUIManager = FindObjectOfType<UIManagerScript>();
+            gameUIManager.UpdateHealth(health);
+            gameUIManager.UpdateBullets(bulletCount);
 
             if (!photonView.IsMine)
             {
@@ -216,6 +223,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (Input.GetMouseButtonDown(0) && canShoot && bulletCount > 0)
             {
                 bulletCount--;
+                gameUIManager.UpdateBullets(bulletCount);
                 canShoot = false;
 
                 animator.SetBool("isShooting", true);
@@ -246,7 +254,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
 
 
-        /* COLISIONS I ATAC */
+        /* COLISIONS , DAMAGE I MORT*/
 
 
 
@@ -267,7 +275,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (isDead) return; // If the player is already dead, do nothing
             
-            health -= 150;
+            health -= 20;
+            gameUIManager.UpdateHealth(health);
 
             if (health <= 0)
             {
@@ -315,6 +324,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 { "killCount", killCount }
             });
             bulletCount += 5;
+            gameUIManager.UpdateBullets(bulletCount);
         }
 
         public int GetKills()

@@ -17,16 +17,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public Button quitButton;
         public TMP_Text killsText;
 
+
         void Start()
         {
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
             reJoin.onClick.AddListener(ReJoinRoom);
             quitButton.onClick.AddListener(QuitGame);
 
-            if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("killCount"))
-            {
-                int killCount = (int)PhotonNetwork.LocalPlayer.CustomProperties["killCount"];
-                killsText.text = "Score: " + killCount;
-            }
+
+            killsText.text = "Rounds Survived: " + GameplayScript.currentRound;
         }
 
 

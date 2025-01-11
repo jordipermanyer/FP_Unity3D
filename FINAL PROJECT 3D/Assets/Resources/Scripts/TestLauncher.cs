@@ -25,6 +25,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             menuPanel.SetActive(true);     // Show the menu initially
             text = "Welcome! Click 'Join' to enter the game.";
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         // Called when the Join Room button is clicked
