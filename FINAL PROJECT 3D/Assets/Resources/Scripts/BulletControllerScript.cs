@@ -24,13 +24,12 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void OnCollisionEnter(Collision collision)
         {
-            // Si colisiona con Wall, Enemy o Floor, instancia explosión y destruye
-            if (collision.gameObject.CompareTag("Wall") ||
-                collision.gameObject.CompareTag("Enemy") ||
-                collision.gameObject.CompareTag("Floor"))
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                DestroyBullet();
+                rb.velocity = Vector3.zero; // Stop the bullet instantly
             }
+            DestroyBullet();
         }
 
         /// <summary>

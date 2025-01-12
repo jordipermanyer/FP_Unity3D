@@ -171,6 +171,8 @@ MonoBehaviour:
   agent: {fileID: 814479946}
   detectionRadius: 10
   shootingRadius: 5
+  ammoBoxPrefab: {fileID: 5470032031343734745, guid: f06967cc99bda5041bb6beaa6237f583, type: 3}
+  ammoBoxHeight: 1
 --- !u!195 &814479946
 NavMeshAgent:
   m_ObjectHideFlags: 0

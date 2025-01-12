@@ -8,41 +8,58 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class CameraCollisionScript : MonoBehaviour
     {
-        private Camera playerCamera;
-        private Transform playerTransform;
+        public Transform player; // Reference to the player transform
+        public LayerMask collisionLayers; // Layers the camera can collide with
 
-        public float cameraDistance = 2f; // Camera distance from the player
-        public float smoothing = 10f; // Smoothing of the camera movement
+        public float maxCameraDistance = 2f; // Max distance from the player
+        public float collisionOffset = 0.2f; // Offset from the collision point
 
-        // Called when the object is instantiated
+        private Vector3 cameraInitialPosition; // Store the initial position of the camera relative to the player
+
         void Start()
         {
-            // Ensure that the camera is attached to the player prefab
-            playerCamera = GetComponentInChildren<Camera>();
-            playerTransform = transform; // The player transform is the parent of the camera
-        }
-
-        void Update()
-        {
-            if (playerCamera != null)
+            if (player != null)
             {
-                HandleCameraCollision();
+                // Store the camera's initial position relative to the player
+                cameraInitialPosition = transform.position - player.position;
             }
         }
 
-        // Adjusts the camera position if it collides with something
+        void LateUpdate()
+        {
+            HandleCameraCollision();
+        }
+
         private void HandleCameraCollision()
         {
-            RaycastHit hit;
-            Vector3 targetPosition = playerTransform.position - playerTransform.forward * cameraDistance;
+            if (player == null) return;
 
-            if (Physics.Raycast(playerTransform.position, -playerTransform.forward, out hit, cameraDistance))
+            // Calculate the desired position based on the initial offset
+            Vector3 playerPosition = player.position;
+            Vector3 initialCameraPosition = playerPosition + cameraInitialPosition;
+
+            // Calculate direction from the camera to the player
+            Vector3 cameraDirection = (initialCameraPosition - playerPosition).normalized;
+            float targetDistance = maxCameraDistance;
+
+            // Check for collisions using a raycast
+            if (Physics.Raycast(playerPosition, cameraDirection, out RaycastHit hit, maxCameraDistance, collisionLayers))
             {
-                targetPosition = hit.point; // Set the camera position to the collision point
-            }
+                // Adjust distance based on the collision
+                targetDistance = hit.distance - collisionOffset;
+                targetDistance = Mathf.Max(0.5f, targetDistance); // Prevent the camera from getting too close
 
-            // Smooth the camera movement
-            playerCamera.transform.position = Vector3.Lerp(playerCamera.transform.position, targetPosition, Time.deltaTime * smoothing);
+                // Calculate the new desired camera position after collision handling
+                Vector3 desiredCameraPosition = playerPosition + cameraDirection * targetDistance;
+
+                // Smoothly move the camera to the new position
+                transform.position = Vector3.Lerp(transform.position, desiredCameraPosition, Time.deltaTime * 10f);
+            }
+            else
+            {
+                // If no collision, maintain the initial camera position relative to the player
+                transform.position = Vector3.Lerp(transform.position, initialCameraPosition, Time.deltaTime * 10f);
+            }
         }
     }
 

@@ -328,7 +328,6 @@ MonoBehaviour:
   acc: 2
   decel: 2
   health: 100
-  killCount: 0
   shootCooldown: 0.45
   explosionVfx: {fileID: 100004, guid: 6e8c7c425e5bc374daf95a774767b1e3, type: 3}
   explotionSpawnPoint: {fileID: 8298894356158556814}

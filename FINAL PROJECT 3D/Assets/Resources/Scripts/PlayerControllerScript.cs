@@ -42,7 +42,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         //Player
         public int health = 100;
         private bool isDead = false;
-        public int killCount = 0;
 
         //Shooting
         private int bulletCount = 50;
@@ -71,20 +70,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             Camera playerCamera = GetComponentInChildren<Camera>();
 
-            if (playerCamera != null)
-            {
-                // We add the camera with an offset
-                cameraTransform = playerCamera.transform;
-                Vector3 newPosition = cameraTransform.localPosition;
-                newPosition.x += 1f;
-                cameraTransform.localPosition = newPosition;
+            
 
-                Vector3 directionToCamera = cameraTransform.position - player.transform.position;
-                directionToCamera.y = 0; // Ensure we don't tilt the player up or down, only rotate horizontally
-
-                Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
-                player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, Time.deltaTime * 5f);
-            }
+            SetCameraPosition(transform, playerCamera);
 
             //Evitar bugs camera rotation
             rb = GetComponent<Rigidbody>();
@@ -93,18 +81,35 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 rb.freezeRotation = true; // Lock all rotations
             }
 
-
-
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
-            {
-                { "killCount", killCount }
-            });
-
             PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
                 { "IsAlive", true }
             });
         }
+
+        public void SetCameraPosition(Transform playerTransform, Camera playerCamera)
+        {
+            if (playerCamera != null)
+            {
+                cameraTransform = playerCamera.transform;
+
+                // Set the local position offset
+                Vector3 newPosition = cameraTransform.localPosition;
+                newPosition.x += 1f;
+                cameraTransform.localPosition = newPosition;
+
+                // Adjust the rotation to face the player
+                Vector3 directionToCamera = cameraTransform.position - playerTransform.position;
+                directionToCamera.y = 0; // Ignore vertical axis for rotation
+                Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
+
+                playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, targetRotation, Time.deltaTime * 5f);
+            }
+        }
+
+
+
+
 
         // Update is called once per frame
         void Update()
@@ -322,11 +327,22 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             });
         }
 
-
-        public int GetKills()
+        public void AddBullets(int amount)
         {
-            return killCount;
+            if (photonView.IsMine)
+            {
+                Debug.LogWarning("Adding bullets");
+                bulletCount += amount;
+                if(bulletCount > 50)
+                {
+                    bulletCount = 50;   
+                }
+                gameUIManager.ShowPopup();
+                gameUIManager.UpdateBullets(bulletCount);
+            }
         }
+
+
 
         public bool isD()
         {

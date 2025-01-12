@@ -139,36 +139,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Update the round display on the UI
         void UpdateRoundText()
         {
-            /*
-             roundText.text = "Round: " + currentRound + "\n";
-
-             if (roundText != null)
-             {
-                 // Iterate through all players to get their kill counts
-                 foreach (var player in PhotonNetwork.PlayerList)
-                 {
-                     if (player.IsLocal)
-                     {
-                         PhotonView photonView = player.TagObject as PhotonView;
-                         if (photonView != null)
-                         {
-                             GameObject playerObject = photonView.gameObject;  // Get the player GameObject
-                             if (playerObject != null)
-                             {
-                                 PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
-                                 roundText.text += "Kills" + playerController.GetKills();
-                             }
-                         }
-                         else
-                         {
-                             Debug.LogWarningFormat("Aqui1 - PhotonView not found for player: " + player.NickName);
-                         }
-                     }
-
-                 }
-
-
-             }*/
             gameUIManager.UpdateEnemies(enemiesToSpawn - enemiesKilledRound);
             gameUIManager.UpdateRound(currentRound);
         }
