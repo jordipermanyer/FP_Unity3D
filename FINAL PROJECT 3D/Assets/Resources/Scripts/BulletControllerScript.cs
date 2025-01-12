@@ -22,14 +22,12 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
         }
 
-        void OnCollisionEnter(Collision collision)
+
+        void OnTriggerEnter(Collider other)
         {
-            Rigidbody rb = GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.velocity = Vector3.zero; // Stop the bullet instantly
-            }
+            
             DestroyBullet();
+            
         }
 
         /// <summary>
@@ -39,7 +37,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (explosionVfx != null)
             {
-                Instantiate(explosionVfx, transform.position, transform.rotation);
+                GameObject explosion = Instantiate(explosionVfx, transform.position, transform.rotation);
+                Destroy(explosion, 1f);
             }
 
             Destroy(gameObject);
