@@ -48,9 +48,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private int bulletCount = 50;
         private bool canShoot = true;
         public float shootCooldown = 0.45f;
+        public GameObject explosionVfx;
+        public Transform explotionSpawnPoint;
 
         private UIManagerScript gameUIManager;
-
+        private Gun gunScript;
 
         void Start()
         {
@@ -60,6 +62,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             gameUIManager = FindObjectOfType<UIManagerScript>();
             gameUIManager.UpdateHealth(health);
             gameUIManager.UpdateBullets(bulletCount);
+            gunScript = GetComponent<Gun>();
 
             if (!photonView.IsMine)
             {
@@ -220,19 +223,30 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 gameUIManager.UpdateBullets(bulletCount);
                 canShoot = false;
 
+
+                Instantiate(explosionVfx, explotionSpawnPoint.position, Quaternion.identity);
+
                 animator.SetBool("isShooting", true);
                 RaycastHit hit;
-                if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100.0f))
+
+                Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                if (Physics.Raycast(ray, out hit, 100.0f))
                 {
                     Debug.Log("Raycast hit: " + hit.collider.name);
+                    float distanceToTarget = hit.distance; // Distance from camera to target
+
                     if (hit.collider.CompareTag("Enemy"))
                     {
                         EnemyControllerScript enemyScript = hit.collider.GetComponent<EnemyControllerScript>();
                         PhotonView enemyPhotonView = enemyScript.GetComponent<PhotonView>();
                         enemyPhotonView.RPC("TakeDamage", RpcTarget.All, 10, PhotonNetwork.LocalPlayer.UserId);
-
                     }
+
+                    // Shoot the bullet and adjust speed to match the distance
+                    gunScript.Shoot(ray.direction, distanceToTarget);
                 }
+                
+
                 StartCoroutine(StopShootingAnimation());
             }
         }
@@ -308,19 +322,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             });
         }
 
-
-
-        public void AddKill()
-        {
-            killCount++;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
-            {
-                { "killCount", killCount }
-            });
-            bulletCount += 5;
-            if (bulletCount > 50) bulletCount = 50;
-            gameUIManager.UpdateBullets(bulletCount);
-        }
 
         public int GetKills()
         {
