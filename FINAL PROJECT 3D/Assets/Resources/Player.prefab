@@ -333,6 +333,7 @@ MonoBehaviour:
   shootCooldown: 0.45
   explosionVfx: {fileID: 100004, guid: 6e8c7c425e5bc374daf95a774767b1e3, type: 3}
   explotionSpawnPoint: {fileID: 8298894356158556814}
+  view: {fileID: 7007571594220525351}
 --- !u!114 &7007571594220525351
 MonoBehaviour:
   m_ObjectHideFlags: 0

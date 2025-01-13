@@ -54,6 +54,16 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private Gun gunScript;
         private PlayerSoundScript playerSoundScript;
 
+        public PhotonView view;
+
+        private void Awake()
+        {
+            if (!view.IsMine)
+            {
+                this.gameObject.SetActive(false);
+            }
+        }
+
         void Start()
         {
             player = transform;
