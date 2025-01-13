@@ -54,14 +54,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         public PhotonView view;
 
-        /*private void Awake()
-        {
-            if (!view.IsMine)
-            {
-                this.gameObject.SetActive(false);
-            }
-        }*/
-
         void Start()
         {
             player = transform;
@@ -73,9 +65,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             gunScript = GetComponent<Gun>();
             playerSoundScript = GetComponent<PlayerSoundScript>();
 
-            if (!photonView.IsMine)
+            if (photonView.IsMine)
             {
-                transform.GetChild(0).gameObject.SetActive(false); //disable camera
+                // This player controls this object, enable camera and other related components
+                transform.GetChild(0).gameObject.SetActive(true); // enable camera
+            }
+            else
+            {
+                // Disable components that should only be active for the owning player
+                transform.GetChild(0).gameObject.SetActive(false); // disable camera
             }
 
             Camera playerCamera = GetComponentInChildren<Camera>();

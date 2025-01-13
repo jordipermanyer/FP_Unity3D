@@ -29,8 +29,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
 
 
             if (PhotonNetwork.IsMasterClient)
