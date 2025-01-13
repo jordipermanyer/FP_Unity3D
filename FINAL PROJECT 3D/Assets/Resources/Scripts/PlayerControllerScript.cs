@@ -56,13 +56,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         public PhotonView view;
 
-        private void Awake()
-        {
-            if (!view.IsMine)
-            {
-                this.gameObject.SetActive(false);
-            }
-        }
+        
 
         void Start()
         {
@@ -75,7 +69,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             gunScript = GetComponent<Gun>();
             playerSoundScript = GetComponent<PlayerSoundScript>();
 
-            if (!photonView.IsMine)
+            if (!view.IsMine)
             {
                 transform.GetChild(0).gameObject.SetActive(false); //disable camera
             }
@@ -126,7 +120,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Update is called once per frame
         void Update()
         {
-            if (photonView.IsMine) //only moves if the player is yourself
+            if (!photonView.IsMine) return;
+            if (view.IsMine) //only moves if the player is yourself
             {
                 if (isDead) return;
                 movment();
@@ -345,7 +340,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         public void AddBullets(int amount)
         {
-            if (photonView.IsMine)
+            if (view.IsMine)
             {
                 Debug.LogWarning("Adding bullets");
                 bulletCount += amount;
