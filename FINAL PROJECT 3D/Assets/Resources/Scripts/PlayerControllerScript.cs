@@ -52,6 +52,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private UIManagerScript gameUIManager;
         private Gun gunScript;
+        private PlayerSoundScript playerSoundScript;
 
         void Start()
         {
@@ -62,6 +63,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             gameUIManager.UpdateHealth(health);
             gameUIManager.UpdateBullets(bulletCount);
             gunScript = GetComponent<Gun>();
+            playerSoundScript = GetComponent<PlayerSoundScript>();
 
             if (!photonView.IsMine)
             {
@@ -172,6 +174,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 velX = Mathf.Lerp(velX, inputDirection.x * (isSprinting ? 2.0f : 1.0f), Time.deltaTime * acc);
                 velZ = Mathf.Lerp(velZ, inputDirection.z * (isSprinting ? 2.0f : 1.0f), Time.deltaTime * acc);
+
+                playerSoundScript.StartWalking();
             }
             else
             {
@@ -179,6 +183,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 // Decelerate parameters smoothly
                 velX = Mathf.Lerp(velX, 0f, Time.deltaTime * decel);
                 velZ = Mathf.Lerp(velZ, 0f, Time.deltaTime * decel);
+
+                playerSoundScript.StopWalking();
             }
 
             // Rotate the player based on mouse movement

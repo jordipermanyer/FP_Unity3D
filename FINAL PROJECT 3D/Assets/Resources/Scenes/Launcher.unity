@@ -470,6 +470,7 @@ GameObject:
   - component: {fileID: 361498236}
   - component: {fileID: 361498237}
   - component: {fileID: 361498238}
+  - component: {fileID: 361498239}
   m_Layer: 0
   m_Name: LauncherController
   m_TagString: Untagged
@@ -519,6 +520,21 @@ MonoBehaviour:
   menuPanel: {fileID: 79098963}
   joinRoomButton: {fileID: 201557537}
   quitButton: {fileID: 1816797444}
+--- !u!114 &361498239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361498235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c26585217194274d89121d67078aa26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioMixer: {fileID: 24100000, guid: 931a4aa05d7121f4ba51c35d28785fae, type: 2}
+  musicSlider: {fileID: 1075706935}
+  vfxSlider: {fileID: 1669488043}
 --- !u!1 &379695974
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,10 +811,10 @@ AudioSource:
   m_GameObject: {fileID: 532345007}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 2777840331392318955, guid: 931a4aa05d7121f4ba51c35d28785fae, type: 2}
   m_audioClip: {fileID: 8300000, guid: 9ec7568e691645948b596a4c1b8c1fd2, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.92
   m_Pitch: 1
   Loop: 1
   Mute: 0
