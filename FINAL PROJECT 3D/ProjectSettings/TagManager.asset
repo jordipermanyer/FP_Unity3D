@@ -17,12 +17,11 @@ TagManager:
   - Stairs
   - WorldWall
   - CameraHolder
-  - tree
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Wall
+  - 
   - Water
   - UI
   - 

@@ -8,58 +8,62 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class CameraCollisionScript : MonoBehaviour
     {
-        public Transform player; // Reference to the player transform
-        public LayerMask collisionLayers; // Layers the camera can collide with
+        private Transform cameraTransform;
+        private Transform playerTransform;
 
-        public float maxCameraDistance = 2f; // Max distance from the player
-        public float collisionOffset = 0.2f; // Offset from the collision point
-
-        private Vector3 cameraInitialPosition; // Store the initial position of the camera relative to the player
+        [SerializeField] private string wallTag = "Wall"; // Tag to identify walls
+        [SerializeField] private float maxDistance = 5f; // Maximum allowed distance from the player
+        [SerializeField] private float minDistance = 1f; // Minimum allowed distance from the player
+        private float currentDistance;
 
         void Start()
         {
-            if (player != null)
+            // Find the player dynamically based on the tag
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null)
             {
-                // Store the camera's initial position relative to the player
-                cameraInitialPosition = transform.position - player.position;
+                Debug.LogError("No object with the 'Player' tag found in the scene!");
+                return;
             }
+
+            playerTransform = player.transform;
+            cameraTransform = player.transform.Find("Camera");
+
+            if (cameraTransform == null)
+            {
+                Debug.LogError("Player does not have a child object named 'Camera'!");
+                return;
+            }
+
+            // Set initial camera distance
+            currentDistance = maxDistance;
         }
 
         void LateUpdate()
         {
-            HandleCameraCollision();
-        }
+            if (playerTransform == null || cameraTransform == null)
+                return;
 
-        private void HandleCameraCollision()
-        {
-            if (player == null) return;
+            // Calculate direction from player to camera
+            Vector3 cameraDirection = (cameraTransform.position - playerTransform.position).normalized;
 
-            // Calculate the desired position based on the initial offset
-            Vector3 playerPosition = player.position;
-            Vector3 initialCameraPosition = playerPosition + cameraInitialPosition;
-
-            // Calculate direction from the camera to the player
-            Vector3 cameraDirection = (initialCameraPosition - playerPosition).normalized;
-            float targetDistance = maxCameraDistance;
-
-            // Check for collisions using a raycast
-            if (Physics.Raycast(playerPosition, cameraDirection, out RaycastHit hit, maxCameraDistance, collisionLayers))
+            // Raycast to detect walls between the player and the camera
+            if (Physics.Raycast(playerTransform.position, cameraDirection, out RaycastHit hit, maxDistance))
             {
-                // Adjust distance based on the collision
-                targetDistance = hit.distance - collisionOffset;
-                targetDistance = Mathf.Max(0.5f, targetDistance); // Prevent the camera from getting too close
-
-                // Calculate the new desired camera position after collision handling
-                Vector3 desiredCameraPosition = playerPosition + cameraDirection * targetDistance;
-
-                // Smoothly move the camera to the new position
-                transform.position = Vector3.Lerp(transform.position, desiredCameraPosition, Time.deltaTime * 10f);
+                if (hit.collider.CompareTag(wallTag))
+                {
+                    // Adjust camera distance based on wall position
+                    currentDistance = Mathf.Clamp(hit.distance, minDistance, maxDistance);
+                }
             }
             else
             {
-                // If no collision, maintain the initial camera position relative to the player
-                transform.position = Vector3.Lerp(transform.position, initialCameraPosition, Time.deltaTime * 10f);
+                // Reset to max distance if no wall is detected
+                currentDistance = maxDistance;
             }
+
+            // Update camera position
+            cameraTransform.position = playerTransform.position + cameraDirection * currentDistance;
         }
     }
 

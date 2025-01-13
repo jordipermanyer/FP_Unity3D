@@ -5,31 +5,42 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class Gun : MonoBehaviour
     {
-
-        public GameObject explosionVfx;
-        public GameObject bulletPrefab;  
+        [Header("Puntos de referencia")]
+        public Transform bulletSpawnPoint; // Transform donde se genera la bala
         
+        [Header("Prefabs")]
+        public GameObject bulletPrefab;    // Prefab de la bala
+        
+        [Header("Parámetros de disparo")]
+        [Tooltip("Velocidad de la bala")]
+        public float bulletSpeed = 50f;
+        [Tooltip("Frecuencia de disparo (segundos entre cada disparo)")]
+        public float fireRate = 0.2f;
 
-        public void Shoot(Vector3 direction, float distanceToTarget)
+        private float nextFireTime = 0f;
+
+        void Update()
         {
-            // Create the ray from the center of the screen
-            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
-
-            // Instantiate the bullet at the camera's position
-            GameObject bullet = Instantiate(bulletPrefab, Camera.main.transform.position, Quaternion.identity);
-
-            bullet.transform.rotation = Quaternion.LookRotation(ray.direction);
-            bullet.transform.Rotate(new Vector3(0, 90, 90));
-
-            // Get the Rigidbody of the bullet
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            if (rb != null)
+                // Dispara con la tecla Espacio y respeta la cadencia (fireRate)
+                if (Input.GetMouseButtonDown(0) && Time.time > nextFireTime)
             {
-                // Dynamically set the bullet's speed based on the target distance
-                float adjustedSpeed = distanceToTarget / 0.1f; // 0.1 seconds to visually match
-                rb.velocity = ray.direction * adjustedSpeed;
+                Shoot();
+                nextFireTime = Time.time + fireRate;
             }
         }
 
+        void Shoot()
+        {
+            GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+
+            // Obtener el Rigidbody de la bala
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                
+                // Asignamos la velocidad directamente en la dirección 'forward' de bulletSpawnPoint
+                rb.velocity = bulletSpawnPoint.forward * bulletSpeed;
+            }
+        }
     }
 }

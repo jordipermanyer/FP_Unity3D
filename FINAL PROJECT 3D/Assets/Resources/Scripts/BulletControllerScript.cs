@@ -22,12 +22,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
         }
 
-
-        void OnTriggerEnter(Collider other)
+        void OnCollisionEnter(Collision collision)
         {
-            
-            DestroyBullet();
-            
+            // Si colisiona con Wall, Enemy o Floor, instancia explosión y destruye
+            if (collision.gameObject.CompareTag("Wall") ||
+                collision.gameObject.CompareTag("Enemy") ||
+                collision.gameObject.CompareTag("Floor"))
+            {
+                DestroyBullet();
+            }
         }
 
         /// <summary>
@@ -37,8 +40,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (explosionVfx != null)
             {
-                GameObject explosion = Instantiate(explosionVfx, transform.position, transform.rotation);
-                Destroy(explosion, 1f);
+                Instantiate(explosionVfx, transform.position, transform.rotation);
             }
 
             Destroy(gameObject);
