@@ -18,6 +18,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private int enemiesAlive;
         private int currentRound;
 
+        public TMP_Text ammoPopupText;
+        public float displayDuration = 1f;
+        public float fadeDuration = 0.5f;
+
+        /*UPDATING UI*/
         public void UpdateHealth(int health)
         {
             currentHealth = health;
@@ -43,6 +48,54 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             currentRound = round;
             roundText.text = "Round: " + currentRound;
+        }
+
+
+
+        /*BULLET POP UP*/
+
+        public void ShowPopup()
+        {
+            // Set the popup text to display the ammo amount
+            ammoPopupText.text = "+5";
+
+            // Start the popup animation
+            StartCoroutine(PopupAnimation());
+        }
+
+        private IEnumerator PopupAnimation()
+        {
+            // Make sure the text is invisible at the start
+            Color textColor = ammoPopupText.color;
+            textColor.a = 0;
+            ammoPopupText.color = textColor;
+
+            // Show the text (fade in)
+            ammoPopupText.gameObject.SetActive(true);
+            float elapsedTime = 0f;
+            while (elapsedTime < fadeDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                textColor.a = Mathf.Lerp(0, 1, elapsedTime / fadeDuration);
+                ammoPopupText.color = textColor;
+                yield return null;
+            }
+
+            // Wait for the popup to stay visible for the desired time
+            yield return new WaitForSeconds(displayDuration);
+
+            // Fade out the text
+            elapsedTime = 0f;
+            while (elapsedTime < fadeDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                textColor.a = Mathf.Lerp(1, 0, elapsedTime / fadeDuration);
+                ammoPopupText.color = textColor;
+                yield return null;
+            }
+
+            // Hide the text once the fade-out is complete
+            ammoPopupText.gameObject.SetActive(false);
         }
     }
 }

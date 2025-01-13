@@ -30,6 +30,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private bool isDying = false;
 
+        public GameObject ammoBoxPrefab;
+        public float ammoBoxHeight = 1f;
 
         void Awake()
         {
@@ -237,34 +239,12 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (isDying) return;
             if (PhotonNetwork.IsMasterClient)
             {
+                
                 health -= damage;
-                //Debug.Log($"Enemy took {damage} damage. Remaining health: {health}");
 
                 if (health <= 0)
                 {
-                    ReportKillToPlayer(playerId);
-                }
-            }
-        }
-
-        private void ReportKillToPlayer(string playerId)
-        {
-            // Find the player by their ID and increment their kill count
-            foreach (var player in PhotonNetwork.PlayerList)
-            {
-                if (player.UserId == playerId)
-                {
-                    GameObject photonView = player.TagObject as GameObject;
-                    if (photonView != null)
-                    {
-                        PlayerControllerScript playerController = photonView.GetComponent<PlayerControllerScript>();
-                        if (playerController != null)
-                        {
-                            playerController.AddKill();
-                            photonViewEnemy.RPC("Die", RpcTarget.All);
-                        }
-                    }
-                    break;
+                    photonViewEnemy.RPC("Die", RpcTarget.All);
                 }
             }
         }
@@ -275,7 +255,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                
+                Vector3 spawnPosition = transform.position + Vector3.up * ammoBoxHeight;
+                PhotonNetwork.Instantiate("Prefabs/Ammo", spawnPosition, Quaternion.identity, 0, null);
+
                 GameplayScript gameplayScript = FindObjectOfType<GameplayScript>();
                 if (gameplayScript != null)
                 {

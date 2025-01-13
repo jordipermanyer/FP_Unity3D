@@ -12,7 +12,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
     {
         // Enemy logic
         public GameObject enemyPrefab;
-        private int[] enemiesPerRound = { 3, 3, 3, 3 }; // Number of enemies per round
         public float spawnInterval = 2.5f; // Time between each spawn
         public static int currentRound = 0; // Current round number
 
@@ -22,7 +21,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Spawning
         private List<Transform> spawnPoints = new List<Transform>();
 
-        private int enemiesToSpawn;
+        private int enemiesToSpawn = 0;
         private int enemiesKilledRound = 0;
 
         private UIManagerScript gameUIManager;
@@ -39,7 +38,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 resetScene();
             }
 
-                gameUIManager = FindObjectOfType<UIManagerScript>();
+            gameUIManager = FindObjectOfType<UIManagerScript>();
             gameUIManager.UpdateEnemies(enemiesToSpawn - enemiesKilledRound);
             gameUIManager.UpdateRound(currentRound);
 
@@ -58,14 +57,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         void StartNewRound()
         {
-            if (currentRound >= enemiesPerRound.Length)
-            {
-                Debug.Log("All rounds completed!");
-                return;
-            }
-
             currentRound++;
-            enemiesToSpawn = enemiesPerRound[currentRound - 1];
+            enemiesToSpawn +=  3;
             enemiesKilledRound = 0;
 
             photonView.RPC("SyncGameInfoRPC", RpcTarget.All, currentRound, enemiesToSpawn, enemiesKilledRound); //Sync all players with usefull info
@@ -101,7 +94,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 enemiesKilledRound++;
                 photonView.RPC("SyncGameInfoRPC", RpcTarget.All, currentRound, enemiesToSpawn, enemiesKilledRound); //Sync all players with usefull info
 
-                if (AllEnemiesDead())
+                if (enemiesKilledRound == enemiesToSpawn)
                 {
                     StartNewRound();
                 }
@@ -119,11 +112,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             UpdateRoundText();
         }
 
-        bool AllEnemiesDead()
-        {
-            return enemiesKilledRound == enemiesToSpawn;
-        }
-
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
@@ -139,36 +127,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         // Update the round display on the UI
         void UpdateRoundText()
         {
-            /*
-             roundText.text = "Round: " + currentRound + "\n";
-
-             if (roundText != null)
-             {
-                 // Iterate through all players to get their kill counts
-                 foreach (var player in PhotonNetwork.PlayerList)
-                 {
-                     if (player.IsLocal)
-                     {
-                         PhotonView photonView = player.TagObject as PhotonView;
-                         if (photonView != null)
-                         {
-                             GameObject playerObject = photonView.gameObject;  // Get the player GameObject
-                             if (playerObject != null)
-                             {
-                                 PlayerControllerScript playerController = playerObject.GetComponent<PlayerControllerScript>();
-                                 roundText.text += "Kills" + playerController.GetKills();
-                             }
-                         }
-                         else
-                         {
-                             Debug.LogWarningFormat("Aqui1 - PhotonView not found for player: " + player.NickName);
-                         }
-                     }
-
-                 }
-
-
-             }*/
             gameUIManager.UpdateEnemies(enemiesToSpawn - enemiesKilledRound);
             gameUIManager.UpdateRound(currentRound);
         }
@@ -176,6 +134,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public void resetScene()
         {
             currentRound = 0;
+            enemiesToSpawn = 0;
             enemiesKilledRound = 0;
         }
 

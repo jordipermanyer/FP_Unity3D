@@ -42,7 +42,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         //Player
         public int health = 100;
         private bool isDead = false;
-        public int killCount = 0;
 
         //Shooting
         private int bulletCount = 50;
@@ -50,7 +49,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public float shootCooldown = 0.45f;
 
         private UIManagerScript gameUIManager;
+        private Gun gunScript;
+        private PlayerSoundScript playerSoundScript;
 
+        public PhotonView view;
+
+        /*private void Awake()
+        {
+            if (!view.IsMine)
+            {
+                this.gameObject.SetActive(false);
+            }
+        }*/
 
         void Start()
         {
@@ -60,6 +70,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             gameUIManager = FindObjectOfType<UIManagerScript>();
             gameUIManager.UpdateHealth(health);
             gameUIManager.UpdateBullets(bulletCount);
+            gunScript = GetComponent<Gun>();
+            playerSoundScript = GetComponent<PlayerSoundScript>();
 
             if (!photonView.IsMine)
             {
@@ -68,20 +80,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             Camera playerCamera = GetComponentInChildren<Camera>();
 
-            if (playerCamera != null)
-            {
-                // We add the camera with an offset
-                cameraTransform = playerCamera.transform;
-                Vector3 newPosition = cameraTransform.localPosition;
-                newPosition.x += 1f;
-                cameraTransform.localPosition = newPosition;
+            
 
-                Vector3 directionToCamera = cameraTransform.position - player.transform.position;
-                directionToCamera.y = 0; // Ensure we don't tilt the player up or down, only rotate horizontally
-
-                Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
-                player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, Time.deltaTime * 5f);
-            }
+            SetCameraPosition(transform, playerCamera);
 
             //Evitar bugs camera rotation
             rb = GetComponent<Rigidbody>();
@@ -90,18 +91,35 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 rb.freezeRotation = true; // Lock all rotations
             }
 
-
-
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
-            {
-                { "killCount", killCount }
-            });
-
             PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
                 { "IsAlive", true }
             });
         }
+
+        public void SetCameraPosition(Transform playerTransform, Camera playerCamera)
+        {
+            if (playerCamera != null)
+            {
+                cameraTransform = playerCamera.transform;
+
+                // Set the local position offset
+                Vector3 newPosition = cameraTransform.localPosition;
+                newPosition.x += 1f;
+                cameraTransform.localPosition = newPosition;
+
+                // Adjust the rotation to face the player
+                Vector3 directionToCamera = cameraTransform.position - playerTransform.position;
+                directionToCamera.y = 0; // Ignore vertical axis for rotation
+                Quaternion targetRotation = Quaternion.LookRotation(directionToCamera);
+
+                playerTransform.rotation = Quaternion.Slerp(playerTransform.rotation, targetRotation, Time.deltaTime * 5f);
+            }
+        }
+
+
+
+
 
         // Update is called once per frame
         void Update()
@@ -164,6 +182,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 velX = Mathf.Lerp(velX, inputDirection.x * (isSprinting ? 2.0f : 1.0f), Time.deltaTime * acc);
                 velZ = Mathf.Lerp(velZ, inputDirection.z * (isSprinting ? 2.0f : 1.0f), Time.deltaTime * acc);
+
+                playerSoundScript.StartWalking();
             }
             else
             {
@@ -171,6 +191,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 // Decelerate parameters smoothly
                 velX = Mathf.Lerp(velX, 0f, Time.deltaTime * decel);
                 velZ = Mathf.Lerp(velZ, 0f, Time.deltaTime * decel);
+
+                playerSoundScript.StopWalking();
             }
 
             // Rotate the player based on mouse movement
@@ -222,17 +244,25 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 animator.SetBool("isShooting", true);
                 RaycastHit hit;
-                if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, 100.0f))
+
+                Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+                if (Physics.Raycast(ray, out hit, 100.0f))
                 {
                     Debug.Log("Raycast hit: " + hit.collider.name);
+                    float distanceToTarget = hit.distance; // Distance from camera to target
+
                     if (hit.collider.CompareTag("Enemy"))
                     {
                         EnemyControllerScript enemyScript = hit.collider.GetComponent<EnemyControllerScript>();
                         PhotonView enemyPhotonView = enemyScript.GetComponent<PhotonView>();
                         enemyPhotonView.RPC("TakeDamage", RpcTarget.All, 10, PhotonNetwork.LocalPlayer.UserId);
-
                     }
+
+                    // Shoot the bullet and adjust speed to match the distance
+                    gunScript.Shoot(ray.direction, distanceToTarget);
                 }
+                
+
                 StartCoroutine(StopShootingAnimation());
             }
         }
@@ -308,24 +338,22 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             });
         }
 
-
-
-        public void AddKill()
+        public void AddBullets(int amount)
         {
-            killCount++;
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            if (photonView.IsMine)
             {
-                { "killCount", killCount }
-            });
-            bulletCount += 5;
-            if (bulletCount > 50) bulletCount = 50;
-            gameUIManager.UpdateBullets(bulletCount);
+                Debug.LogWarning("Adding bullets");
+                bulletCount += amount;
+                if(bulletCount > 50)
+                {
+                    bulletCount = 50;   
+                }
+                gameUIManager.ShowPopup();
+                gameUIManager.UpdateBullets(bulletCount);
+            }
         }
 
-        public int GetKills()
-        {
-            return killCount;
-        }
+
 
         public bool isD()
         {
