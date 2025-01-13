@@ -56,13 +56,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         public PhotonView view;
 
-        private void Awake()
+        /*private void Awake()
         {
             if (!view.IsMine)
             {
                 this.gameObject.SetActive(false);
             }
-        }
+        }*/
 
         void Start()
         {
