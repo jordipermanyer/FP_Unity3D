@@ -327,13 +327,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91a87481cec0bb439d1636edca86bc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraTransform: {fileID: 3886800422918894410}
-  playerTransform: {fileID: 7007571594334218401}
-  wallLayer:
+  collisionMask:
     serializedVersion: 2
     m_Bits: 8
   collisionRadius: 0.5
   smoothingSpeed: 10
+  verticalOffset: 0.5
+  minVerticalPosition: 1
+  bufferDistance: 0.1
 --- !u!1 &7007571594334647425
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,7 +651,7 @@ MonoBehaviour:
   noAmmo: {fileID: 8300000, guid: 7dd90f8bb698b844aa3689c50ee51a5d, type: 3}
   death: {fileID: 8300000, guid: 05c1827baa95eb240878e9afee02d087, type: 3}
   jump: {fileID: 8300000, guid: 0ae3125256380c14fa9835a59c7f5baa, type: 3}
-  roundVictory: {fileID: 8300000, guid: a110f9a9b84b4e747bb64b656a090937, type: 3}
+  roundVictory: {fileID: 8300000, guid: 2fc678aebbce77a4d85862e63a71d2bb, type: 3}
   Walkingsource: {fileID: 6499395198283620814}
   PlayerSourceSound: {fileID: 4507687044634073908}
 --- !u!82 &6499395198283620814

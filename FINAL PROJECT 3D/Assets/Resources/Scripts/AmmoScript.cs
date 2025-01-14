@@ -22,8 +22,20 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     playerScript.AddBullets(bulletsToGive);
 
                     // Destroy the ammo box after the player picks it up
-                    PhotonNetwork.Destroy(gameObject);
+                    PhotonView view = PhotonView.Get(this);
+                    view.RPC("RequestDestroy", RpcTarget.MasterClient, view.ViewID);
                 }
+            }
+        }
+
+        [PunRPC]
+        private void RequestDestroy(int viewID)
+        {
+            // MasterClient destroys the object
+            PhotonView targetView = PhotonView.Find(viewID);
+            if (targetView != null && PhotonNetwork.IsMasterClient)
+            {
+                PhotonNetwork.Destroy(targetView.gameObject);
             }
         }
     }

@@ -247,7 +247,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (isDying) return;
             if (PhotonNetwork.IsMasterClient)
             {
-                
+                enemySoundScript.impactSound();
                 health -= damage;
 
                 if (health <= 0)

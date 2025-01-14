@@ -64,7 +64,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public void PlayerNoShotSound()
         {
             AudioClip clip = noAmmo;
-            PlayerSourceSound.PlayOneShot(clip, 1.5f);
+            PlayerSourceSound.PlayOneShot(clip, 2f);
         }
 
         public void deathSound()
