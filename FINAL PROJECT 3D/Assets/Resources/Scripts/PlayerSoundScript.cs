@@ -90,7 +90,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public void roundVictorySound()
         {
             AudioClip clip = roundVictory;
-            PlayerSourceSound.PlayOneShot(clip, 1f);
+            PlayerSourceSound.PlayOneShot(clip, 1.4f);
         }
     }
 }
