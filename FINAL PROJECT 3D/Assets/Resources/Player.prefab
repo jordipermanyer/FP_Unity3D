@@ -233,6 +233,7 @@ GameObject:
   - component: {fileID: 3886800422918894410}
   - component: {fileID: 6940547877175498324}
   - component: {fileID: 8588561303872757599}
+  - component: {fileID: 6635625119426606903}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -314,6 +315,25 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5915491419152553390}
   m_Enabled: 1
+--- !u!114 &6635625119426606903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5915491419152553390}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f91a87481cec0bb439d1636edca86bc9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraTransform: {fileID: 3886800422918894410}
+  playerTransform: {fileID: 7007571594334218401}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  collisionRadius: 0.5
+  smoothingSpeed: 10
 --- !u!1 &7007571594334647425
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,6 +649,8 @@ MonoBehaviour:
   pickObject: {fileID: 8300000, guid: 9eff92927c8269e4d8145faf09405dd2, type: 3}
   noAmmo: {fileID: 8300000, guid: 7dd90f8bb698b844aa3689c50ee51a5d, type: 3}
   death: {fileID: 8300000, guid: 05c1827baa95eb240878e9afee02d087, type: 3}
+  jump: {fileID: 8300000, guid: 0ae3125256380c14fa9835a59c7f5baa, type: 3}
+  roundVictory: {fileID: 8300000, guid: a110f9a9b84b4e747bb64b656a090937, type: 3}
   Walkingsource: {fileID: 6499395198283620814}
   PlayerSourceSound: {fileID: 4507687044634073908}
 --- !u!82 &6499395198283620814

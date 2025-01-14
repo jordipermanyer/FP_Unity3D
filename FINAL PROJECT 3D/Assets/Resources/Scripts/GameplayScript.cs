@@ -25,6 +25,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private int enemiesKilledRound = 0;
 
         private UIManagerScript gameUIManager;
+        private PlayerSoundScript gamePlayerSound;
 
 
         void Start()
@@ -39,6 +40,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
 
             gameUIManager = FindObjectOfType<UIManagerScript>();
+            gamePlayerSound = FindObjectOfType<PlayerSoundScript>();
             gameUIManager.UpdateEnemies(enemiesToSpawn - enemiesKilledRound);
             gameUIManager.UpdateRound(currentRound);
 
@@ -76,6 +78,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
         }
 
+        //We spawn an enemy with a delay from the previous function
         void SpawnEnemy()
         {
             // Randomly select a spawn point
@@ -94,14 +97,15 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 enemiesKilledRound++;
                 photonView.RPC("SyncGameInfoRPC", RpcTarget.All, currentRound, enemiesToSpawn, enemiesKilledRound); //Sync all players with usefull info
 
-                if (enemiesKilledRound == enemiesToSpawn)
+                if (enemiesKilledRound == enemiesToSpawn) //All enemies of the round dead, means new round
                 {
+                    gamePlayerSound.roundVictorySound();
                     StartNewRound();
                 }
             }
         }
 
-
+        //Sync all the data across users
         [PunRPC]
         void SyncGameInfoRPC(int round, int toSpawn, int killed)
         {
@@ -112,7 +116,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             UpdateRoundText();
         }
 
-
+        //In cas of a later join in the game update the score ui immediatley
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             if (PhotonNetwork.IsMasterClient)
@@ -121,8 +125,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 photonView.RPC("SyncGameInfoRPC", newPlayer, currentRound, enemiesToSpawn, enemiesKilledRound);
             }
         }
-
-
 
         // Update the round display on the UI
         void UpdateRoundText()

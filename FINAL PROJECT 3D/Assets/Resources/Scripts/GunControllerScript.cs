@@ -9,7 +9,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject explosionVfx;
         public GameObject bulletPrefab;  
         
-
         public void Shoot(Vector3 direction, float distanceToTarget)
         {
             // Create the ray from the center of the screen

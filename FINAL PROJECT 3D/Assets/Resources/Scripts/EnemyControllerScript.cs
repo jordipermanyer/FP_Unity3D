@@ -19,13 +19,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private bool isShooting = false;
         private float wanderRadius = 15f; // Radius for random wandering
-        private float wanderInterval = 3f; // Time interval between setting new wander destinations
+        private float wanderInterval = 2f; // Time interval between setting new wander destinations
         private float wanderTimer;
 
         private float health = 30;
         private PhotonView photonViewEnemy;
 
-        private float updateInterval = 1f; // Update every 1 second
+        private float updateInterval = 1f;
         private float timeSinceLastUpdate = 0f;
 
         private bool isDying = false;
@@ -34,6 +34,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public float ammoBoxHeight = 1f;
 
         public AudioClip[] missSound;
+        private EnemySoundScript enemySoundScript;
 
         void Awake()
         {
@@ -45,14 +46,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             animator = GetComponent<Animator>();
             agent = GetComponent<NavMeshAgent>();
             wanderTimer = wanderInterval;
+            enemySoundScript = GetComponent<EnemySoundScript>();
 
             if (PhotonNetwork.IsConnected)
             {
-                player = GetClosestPlayer(); //Per escena principal CANVIAR VERSIO FINAL
+                player = GetClosestPlayer();
                 timeSinceLastUpdate = 0f;
             }
-            //player = GameObject.FindWithTag("Player").transform; //Per escenas test
-           
         }
 
         Transform GetClosestPlayer()
@@ -63,8 +63,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             // Loop through all Photon players in the game
             foreach (Player photonPlayer in PhotonNetwork.PlayerList)
             {
-                
-
                     // Get the PhotonView attached to the player
                     PhotonView photonView = photonPlayer.TagObject as PhotonView;
                     if (photonView != null)
@@ -87,16 +85,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                                 }
                             }
                         }
-
                 }
-                
             }
-
             return closestPlayer;
         }
-
-
-
 
         void Update()
         {
@@ -114,6 +106,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             PlayerControllerScript playerScript = player.GetComponent<PlayerControllerScript>();
 
+            //Shooting
             if (distanceToPlayer <= shootingRadius && !playerScript.isD())
             {
                 if (!isShooting)
@@ -136,6 +129,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     StartCoroutine(ShootPlayer());
                 }
             }
+            //Following
             else if (distanceToPlayer <= detectionRadius && !playerScript.isD())
             {
                 // Chase the player
@@ -143,9 +137,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 agent.SetDestination(player.position);
                 animator.SetFloat("state", 1);
             }
+            //Random wander
             else
             {
-                // Random wandering when player is not nearby
                 wanderTimer -= Time.deltaTime;
 
                 if (wanderTimer <= 0f)
@@ -156,7 +150,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 animator.SetFloat("state", 0);
             }
-            if (photonViewEnemy.IsMine) // Only the owner of the object will send the position update
+            if (photonViewEnemy.IsMine) // Only themaster will send the position update
             {
                 photonViewEnemy.RPC("SyncPosition", RpcTarget.Others, transform.position);
             }
@@ -180,7 +174,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         [PunRPC]
         void SyncWanderDestination(Vector3 destination)
         {
-            if (!photonViewEnemy.IsMine) // Only non-owner clients will receive the new destination
+            if (!photonViewEnemy.IsMine)
             {
                 agent.SetDestination(destination);
             }
@@ -219,13 +213,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                 }
             }
 
-            // Wait for 3 seconds before allowing another shot
+            // Wait before allowing another shot
             yield return new WaitForSeconds(1f);
 
             isShooting = false;
         }
 
-        //Unprecise shot
+        //Function to add random spread
         Vector3 ApplyRandomSpread(Vector3 direction, float spreadAngle)
         {
             Quaternion spreadRotation = Quaternion.Euler(
@@ -237,6 +231,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             return spreadRotation * direction;
         }
 
+        //If enemy misses we play sound of bullet hiss
         void PlayMissSound()
         {
             AudioClip clip = missSound[(int)Random.Range(0, missSound.Length)];
@@ -284,6 +279,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private IEnumerator DeathAnimation()
         {
+            enemySoundScript.EnemyDeath();
             animator.SetBool("dying", true);
             float deathAnimationLength = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
             yield return new WaitForSeconds(deathAnimationLength);

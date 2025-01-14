@@ -22,11 +22,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     playerScript.AddBullets(bulletsToGive);
 
                     // Destroy the ammo box after the player picks it up
-                    PhotonNetwork.Destroy(gameObject); // Destroy the ammo box across all clients
-                }
-                else
-                {
-                    Debug.LogWarningFormat("No script found, WTF?");
+                    PhotonNetwork.Destroy(gameObject);
                 }
             }
         }

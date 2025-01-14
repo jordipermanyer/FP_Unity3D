@@ -65,7 +65,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private IEnumerator PopupAnimation()
         {
-            // Make sure the text is invisible at the start
+            // The text is invisible at the start
             Color textColor = ammoPopupText.color;
             textColor.a = 0;
             ammoPopupText.color = textColor;

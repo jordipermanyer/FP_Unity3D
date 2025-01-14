@@ -28,14 +28,14 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             DestroyBullet();
         }
 
+        //Random impact sound
         private void HandleImpact()
         {
-            
             AudioClip randomSound = impactSounds[Random.Range(0, impactSounds.Length)];
             AudioSource.PlayClipAtPoint(randomSound, transform.position);
-            
         }
 
+        //We destroy the instance of the bullet
         private void DestroyBullet()
         {
             if (explosionVfx != null)

@@ -52,6 +52,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         private UIManagerScript gameUIManager;
         private Gun gunScript;
         private PlayerSoundScript playerSoundScript;
+        private SnapshotAudioController snapshotAudioController;
 
         public PhotonView view;
 
@@ -65,6 +66,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             gameUIManager.UpdateBullets(bulletCount);
             gunScript = GetComponent<Gun>();
             playerSoundScript = GetComponent<PlayerSoundScript>();
+            snapshotAudioController = FindObjectOfType<SnapshotAudioController>();
 
             if (photonView.IsMine)
             {
@@ -96,6 +98,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             });
         }
 
+        //Ajusting camera with offset
         public void SetCameraPosition(Transform playerTransform, Camera playerCamera)
         {
             if (playerCamera != null)
@@ -117,10 +120,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         }
 
 
-
-
-
-        // Update is called once per frame
         void Update()
         {
             if (photonView.IsMine) //only moves if the player is yourself
@@ -149,7 +148,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
 
 
-        /* LOGICA MOVIMENT */
+        /* MOVMENT LOGIC */
 
 
         public void movment()
@@ -171,6 +170,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
             Vector3 inputDirection = new Vector3(horizontal, 0f, vertical).normalized;
 
+            //For acceleration we controll player position as well as the smooth animations for the blend tree (velX, velZ)
             if (inputDirection.magnitude >= 0.1f)
             {
                 // Calculate the movement direction relative to the camera
@@ -221,11 +221,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (isGrounded && Input.GetKeyDown(KeyCode.Space)) // Only jump if grounded
             {
+                playerSoundScript.jumpSound();
                 rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse); // Apply a jump force upwards
                 isGrounded = false;
             }
         }
 
+        //We update animations either for jumping or the blend tree
         private void UpdateAnimationState()
         {
             animator.SetBool("isJumping", !isGrounded);
@@ -238,7 +240,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             if (Input.GetMouseButtonDown(0) && canShoot && bulletCount > 0)
             {
                 bulletCount--;
-                gameUIManager.UpdateBullets(bulletCount);
+                gameUIManager.UpdateBullets(bulletCount); //Display bullets
                 canShoot = false;
 
                 animator.SetBool("isShooting", true);
@@ -261,7 +263,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     gunScript.Shoot(ray.direction, distanceToTarget);
                 }
                 
-
                 StartCoroutine(StopShootingAnimation());
             }
             else if (bulletCount <= 0 && canPlayNoBulletSound)
@@ -270,6 +271,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
         }
 
+        //Stop shooting animation to controll shooting timings
         private IEnumerator StopShootingAnimation()
         {
             float animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
@@ -278,6 +280,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             canShoot = true;
         }
 
+        //If no bullets play specific sound
         private IEnumerator PlayNoBulletSoundCooldown()
         {
             canPlayNoBulletSound = false;
@@ -289,7 +292,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
 
 
-        /* COLISIONS , DAMAGE I MORT*/
+        /* COLISIONS , DAMAGE AND DEATH*/
 
 
 
@@ -299,9 +302,18 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 isGrounded = true;
             }
-            else if (other.gameObject.CompareTag("Limit"))
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            //Triggers to cahnge the audios effects, from outside to inside and viceversa
+            if (other.CompareTag("In"))
             {
-                Die();
+                snapshotAudioController.indoorTransition();
+            }
+            else if (other.CompareTag("Out"))
+            {
+                snapshotAudioController.outdoorTransition();
             }
         }
 
@@ -321,12 +333,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
             else
             {
-                rb.AddForce(hitDirection * 10f, ForceMode.Impulse);
+                rb.AddForce(hitDirection * 100f, ForceMode.Impulse);
                 takeDamage.damageEffect(transform, 0.2f);
             }
         }
 
-        
         private void Die()
         {
             isDead = true;
@@ -334,7 +345,6 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             animator.SetBool("isDying", true);
 
             StartCoroutine(DeathAnimation());
-
         }
 
         private IEnumerator DeathAnimation()
@@ -342,13 +352,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             animator.SetBool("isDying", true);
             float deathAnimationLength = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
 
-            
-
             yield return new WaitForSeconds(deathAnimationLength + 1.0f * Time.deltaTime);
-            playerSoundScript.deathSound();
-
-            //Destroy(gameObject);
-
+            //For the game over scene, we check with photon if all players have isAlive = false
             PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
                 { "IsAlive", false }
@@ -371,17 +376,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         }
 
 
-
         public bool isD()
         {
             return isDead;
         }
-
-
-
     }
-
-
-    
 }
 

@@ -12,7 +12,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public AudioClip pickObject;
         public AudioClip noAmmo;
         public AudioClip death;
-        
+        public AudioClip jump;
+        public AudioClip roundVictory;
 
         public AudioSource Walkingsource;
         public AudioSource PlayerSourceSound;
@@ -40,12 +41,12 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             }
             else if (!isWalking)
             {
-                //Sometimes sound got bugged, we use a variable to make sure the player has stopped (weird blendtree things)
+                //Sometimes walking sounds got bugged, we use a variable to make sure the player has stopped (weird blendtree things)
                 Walkingsource.Stop();
             }
-            
         }
 
+        //Sounds
         public void PlayerShotSound()
         {
             AudioClip clip = audiosShot[(int)Random.Range(0, audiosShot.Length)];
@@ -80,5 +81,16 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             PlayerSourceSound.Play();
         }
 
+        public void jumpSound()
+        {
+            AudioClip clip = jump;
+            PlayerSourceSound.PlayOneShot(clip, 1f);
+        }
+
+        public void roundVictorySound()
+        {
+            AudioClip clip = roundVictory;
+            PlayerSourceSound.PlayOneShot(clip, 1f);
+        }
     }
 }

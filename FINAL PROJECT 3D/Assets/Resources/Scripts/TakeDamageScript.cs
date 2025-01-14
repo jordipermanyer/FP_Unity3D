@@ -16,7 +16,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private IEnumerator ChangeColorCoroutine(Transform playerTransform, float duration)
         {
-            // Find the specific components you want to change color on
+            // Specific components to change color on
             Renderer armsRenderer = playerTransform.Find("Arm1").GetComponent<Renderer>();
             Renderer backRenderer = playerTransform.Find("Backpack1").GetComponent<Renderer>();
             Renderer bodyRenderer = playerTransform.Find("Body1").GetComponent<Renderer>();

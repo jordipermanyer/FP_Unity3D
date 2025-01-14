@@ -409,6 +409,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5a6ad1aa6c5f587438cb9f969f129bc3, type: 3}
   - {fileID: 8300000, guid: 293e5bd56908b5d4fae7d3a0aa7572be, type: 3}
   - {fileID: 8300000, guid: c6a157c1b1a91cb489b994b285578871, type: 3}
+  audiosDeath:
+  - {fileID: 8300000, guid: 2df49f0dc3a02cc4eb0f0d0809be66ff, type: 3}
+  - {fileID: 8300000, guid: 32c2576e48a6e974da1250591f51d92e, type: 3}
+  - {fileID: 8300000, guid: b4778db486084944d9b3d48657a2fae9, type: 3}
+  - {fileID: 8300000, guid: a880f06c5c7b0fc44a9a02adce9598e8, type: 3}
   Walkingsource: {fileID: 3159323876370447968}
   ShootingSource: {fileID: 5989577835694297628}
 --- !u!82 &3159323876370447968

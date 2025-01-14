@@ -18,6 +18,8 @@ TagManager:
   - WorldWall
   - CameraHolder
   - tree
+  - Out
+  - In
   layers:
   - Default
   - TransparentFX

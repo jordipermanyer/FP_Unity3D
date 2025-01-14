@@ -1,5 +1,23 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!244 &-6334750712035472525
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 2d9061731c7fbd248956926dee27421c
+  m_EffectName: Lowpass
+  m_MixLevel: 751202a5983ce7049af09c9d59131c42
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: b9bdfb3ee0b97bc4cbd2ed14f3df0e65
+  - m_ParameterName: Resonance
+    m_GUID: deebea919ea688b4ebbc70ef664567e2
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!243 &-954017008319085616
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -15,6 +33,7 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: 3841999533047572066}
+  - {fileID: -6334750712035472525}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -29,6 +48,7 @@ AudioMixerController:
   m_OutputGroup: {fileID: 0}
   m_MasterGroup: {fileID: 24300002}
   m_Snapshots:
+  - {fileID: 3612579942357473316}
   - {fileID: 24500006}
   m_StartSnapshot: {fileID: 24500006}
   m_SuspendThreshold: -80
@@ -46,7 +66,7 @@ AudioMixerController:
     - 23012b08c405bfb4fb299d060027c182
     name: View
   m_CurrentViewIndex: 0
-  m_TargetSnapshot: {fileID: 24500006}
+  m_TargetSnapshot: {fileID: 3612579942357473316}
 --- !u!243 &24300002
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -88,7 +108,7 @@ AudioMixerSnapshotController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Snapshot
+  m_Name: Normal
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 1a11b5a7e37bd334bb85e74f53753452
   m_FloatValues: {}
@@ -112,6 +132,18 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!245 &3612579942357473316
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Outdoors
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: c3ed02857c8838d4092f45ce3203c311
+  m_FloatValues:
+    b9bdfb3ee0b97bc4cbd2ed14f3df0e65: 693
+  m_TransitionOverrides: {}
 --- !u!244 &3841999533047572066
 AudioMixerEffectController:
   m_ObjectHideFlags: 3

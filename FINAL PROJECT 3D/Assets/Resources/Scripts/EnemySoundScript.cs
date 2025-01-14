@@ -8,6 +8,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
     {
         public AudioClip[] audiosStep;
         public AudioClip[] audiosShot;
+        public AudioClip[] audiosDeath;
 
         public AudioSource Walkingsource;
         public AudioSource ShootingSource;
@@ -20,10 +21,17 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             Walkingsource.Play();
         }
 
-
         public void EnemyShotSound()
         {
             AudioClip clip = audiosShot[(int)Random.Range(0, audiosShot.Length)];
+            ShootingSource.clip = clip;
+            ShootingSource.volume = 1.2f;
+            ShootingSource.Play();
+        }
+
+        public void EnemyDeath()
+        {
+            AudioClip clip = audiosDeath[(int)Random.Range(0, audiosDeath.Length)];
             ShootingSource.clip = clip;
             ShootingSource.volume = 1.2f;
             ShootingSource.Play();

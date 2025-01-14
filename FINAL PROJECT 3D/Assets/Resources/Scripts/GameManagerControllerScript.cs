@@ -17,11 +17,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject spawnpoint;
         private bool theyDead = false;
 
-        
-
         void Start()
         {
-            
             Vector3 pos = spawnpoint.transform.position;
             pos += new Vector3(
                 UnityEngine.Random.Range(-1.0f, 1.0f),
@@ -41,12 +38,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-
                 PhotonNetwork.LeaveRoom();
                 Application.Quit();
             }
@@ -61,7 +56,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
 
 
-        /* MORT */
+        /* DEATH */
         public void CheckIfAllPlayersDead()
         {
             if (theyDead) return;

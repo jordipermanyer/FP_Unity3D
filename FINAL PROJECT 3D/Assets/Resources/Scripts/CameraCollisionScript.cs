@@ -8,21 +8,27 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class CameraCollisionScript : MonoBehaviour
     {
-        public Transform player; // Reference to the player transform
-        public LayerMask collisionLayers; // Layers the camera can collide with
+        public Transform cameraTransform; // Reference to the camera's transform
+        public Transform playerTransform; // Reference to the player's transform
+        public LayerMask wallLayer; // Layer for walls
+        public float collisionRadius = 0.5f; // Radius for detecting obstacles
+        public float smoothingSpeed = 10f; // Speed of the camera adjustment
 
-        public float maxCameraDistance = 2f; // Max distance from the player
-        public float collisionOffset = 0.2f; // Offset from the collision point
-
-        private Vector3 cameraInitialPosition; // Store the initial position of the camera relative to the player
+        private Vector3 originalOffset; // The initial offset of the camera relative to the player
+        private Vector3 targetPosition; // Target position for the camera
 
         void Start()
         {
-            if (player != null)
+            if (cameraTransform == null || playerTransform == null)
             {
-                // Store the camera's initial position relative to the player
-                cameraInitialPosition = transform.position - player.position;
+                Debug.LogError("CameraCollisionHandler: Missing references to the camera or player!");
+                enabled = false;
+                return;
             }
+
+            // Calculate the initial offset between the player and the camera
+            originalOffset = cameraTransform.position - playerTransform.position;
+            targetPosition = cameraTransform.position;
         }
 
         void LateUpdate()
@@ -32,33 +38,36 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void HandleCameraCollision()
         {
-            if (player == null) return;
+            // Calculate the desired camera position based on the player's position and the original offset
+            Vector3 desiredPosition = playerTransform.position + originalOffset;
 
-            // Calculate the desired position based on the initial offset
-            Vector3 playerPosition = player.position;
-            Vector3 initialCameraPosition = playerPosition + cameraInitialPosition;
-
-            // Calculate direction from the camera to the player
-            Vector3 cameraDirection = (initialCameraPosition - playerPosition).normalized;
-            float targetDistance = maxCameraDistance;
-
-            // Check for collisions using a raycast
-            if (Physics.Raycast(playerPosition, cameraDirection, out RaycastHit hit, maxCameraDistance, collisionLayers))
+            // Check for obstacles between the player and the desired camera position
+            if (Physics.SphereCast(playerTransform.position, collisionRadius, (desiredPosition - playerTransform.position).normalized, out RaycastHit hit, originalOffset.magnitude, wallLayer))
             {
-                // Adjust distance based on the collision
-                targetDistance = hit.distance - collisionOffset;
-                targetDistance = Mathf.Max(0.5f, targetDistance); // Prevent the camera from getting too close
-
-                // Calculate the new desired camera position after collision handling
-                Vector3 desiredCameraPosition = playerPosition + cameraDirection * targetDistance;
-
-                // Smoothly move the camera to the new position
-                transform.position = Vector3.Lerp(transform.position, desiredCameraPosition, Time.deltaTime * 10f);
+                // If an obstacle is detected, adjust the target position to the hit point
+                targetPosition = hit.point - (desiredPosition - playerTransform.position).normalized * collisionRadius;
             }
             else
             {
-                // If no collision, maintain the initial camera position relative to the player
-                transform.position = Vector3.Lerp(transform.position, initialCameraPosition, Time.deltaTime * 10f);
+                // If no obstacles, reset the target position to the desired position
+                targetPosition = desiredPosition;
+            }
+
+            // Smoothly move the camera to the target position
+            cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetPosition, Time.deltaTime * smoothingSpeed);
+
+            // Ensure the camera always looks at the player
+            cameraTransform.LookAt(playerTransform.position + Vector3.up * 1.5f); // Adjust vertical offset if needed
+        }
+
+        void OnDrawGizmos()
+        {
+            // Visualize the collision radius and ray in the scene view
+            if (playerTransform != null && cameraTransform != null)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(cameraTransform.position, collisionRadius);
+                Gizmos.DrawLine(playerTransform.position, cameraTransform.position);
             }
         }
     }
