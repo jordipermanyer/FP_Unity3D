@@ -8,9 +8,14 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
     {
         public AudioClip[] audiosStep;
         public AudioClip[] audiosShot;
+        public AudioClip[] audiosImpact;
+        public AudioClip pickObject;
+        public AudioClip noAmmo;
+        public AudioClip death;
+        
 
         public AudioSource Walkingsource;
-        public AudioSource ShootingSource;
+        public AudioSource PlayerSourceSound;
 
         private bool isWalking = true;
 
@@ -30,11 +35,12 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             {
                 AudioClip clip = audiosStep[(int)Random.Range(0, audiosStep.Length)];
                 Walkingsource.clip = clip;
-                Walkingsource.volume = 0.8f;
+                Walkingsource.volume = 0.5f;
                 Walkingsource.Play();
             }
             else if (!isWalking)
             {
+                //Sometimes sound got bugged, we use a variable to make sure the player has stopped (weird blendtree things)
                 Walkingsource.Stop();
             }
             
@@ -43,9 +49,35 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public void PlayerShotSound()
         {
             AudioClip clip = audiosShot[(int)Random.Range(0, audiosShot.Length)];
-            ShootingSource.clip = clip;
-            ShootingSource.volume = 1.2f;
-            ShootingSource.Play();
+            PlayerSourceSound.clip = clip;
+            PlayerSourceSound.volume = 1.2f;
+            PlayerSourceSound.Play();
+        }
+
+        public void pickObj()
+        {
+            AudioClip clip = pickObject;
+            PlayerSourceSound.PlayOneShot(clip, 1.5f);
+        }
+        
+        public void PlayerNoShotSound()
+        {
+            AudioClip clip = noAmmo;
+            PlayerSourceSound.PlayOneShot(clip, 1.5f);
+        }
+
+        public void deathSound()
+        {
+            AudioClip clip = death;
+            PlayerSourceSound.PlayOneShot(clip, 1f);
+        }
+
+        public void impactSound()
+        {
+            AudioClip clip = audiosImpact[(int)Random.Range(0, audiosImpact.Length)];
+            PlayerSourceSound.clip = clip;
+            PlayerSourceSound.volume = 1f;
+            PlayerSourceSound.Play();
         }
 
     }

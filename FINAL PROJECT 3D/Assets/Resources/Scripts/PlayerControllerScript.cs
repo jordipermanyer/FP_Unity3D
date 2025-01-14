@@ -46,7 +46,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         //Shooting
         private int bulletCount = 50;
         private bool canShoot = true;
-        public float shootCooldown = 0.45f;
+        public float shootCooldown = 0.8f;
+        private bool canPlayNoBulletSound;
 
         private UIManagerScript gameUIManager;
         private Gun gunScript;
@@ -263,14 +264,26 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
                 StartCoroutine(StopShootingAnimation());
             }
+            else if (bulletCount <= 0 && canPlayNoBulletSound)
+            {
+                StartCoroutine(PlayNoBulletSoundCooldown());
+            }
         }
 
         private IEnumerator StopShootingAnimation()
         {
-            // Assuming your shooting animation length is 0.5 seconds (adjust as needed)
+            float animationLength = animator.GetCurrentAnimatorStateInfo(0).length;
             yield return new WaitForSeconds(shootCooldown);
             animator.SetBool("isShooting", false);
             canShoot = true;
+        }
+
+        private IEnumerator PlayNoBulletSoundCooldown()
+        {
+            canPlayNoBulletSound = false;
+            playerSoundScript.PlayerNoShotSound();
+            yield return new WaitForSeconds(0.5f);
+            canPlayNoBulletSound = true;
         }
 
 
@@ -296,7 +309,9 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public void TakeDamage(Vector3 hitDirection)
         {
             if (isDead) return; // If the player is already dead, do nothing
-            
+
+            playerSoundScript.impactSound();
+
             health -= 20;
             gameUIManager.UpdateHealth(health);
 
@@ -326,7 +341,11 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             animator.SetBool("isDying", true);
             float deathAnimationLength = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;
+
+            
+
             yield return new WaitForSeconds(deathAnimationLength + 1.0f * Time.deltaTime);
+            playerSoundScript.deathSound();
 
             //Destroy(gameObject);
 
@@ -340,7 +359,7 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         {
             if (photonView.IsMine)
             {
-                Debug.LogWarning("Adding bullets");
+                playerSoundScript.pickObj();
                 bulletCount += amount;
                 if(bulletCount > 50)
                 {

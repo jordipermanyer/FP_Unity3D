@@ -33,6 +33,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
         public GameObject ammoBoxPrefab;
         public float ammoBoxHeight = 1f;
 
+        public AudioClip[] missSound;
+
         void Awake()
         {
             photonViewEnemy = GetComponent<PhotonView>();
@@ -211,6 +213,10 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
                     playerScript.TakeDamage((hit.collider.transform.position - transform.position).normalized);
 
                 }
+                else
+                {
+                    PlayMissSound();
+                }
             }
 
             // Wait for 3 seconds before allowing another shot
@@ -229,6 +235,13 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             );
 
             return spreadRotation * direction;
+        }
+
+        void PlayMissSound()
+        {
+            AudioClip clip = missSound[(int)Random.Range(0, missSound.Length)];
+            Vector3 randomPosition = player.position + (Random.onUnitSphere * 5f);
+            AudioSource.PlayClipAtPoint(clip, randomPosition);
         }
 
 

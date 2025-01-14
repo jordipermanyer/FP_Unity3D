@@ -6,33 +6,36 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 {
     public class BulletControllerScript : MonoBehaviour
     {
-        [Header("Configuración de bala")]
-        public float lifetime = 10f;              // Tiempo de vida máximo en segundos
-        public GameObject explosionVfx;          // Prefab de la explosión
+        public float lifetime = 10f;
+        public GameObject explosionVfx;
+        public AudioClip[] impactSounds;
 
-        private float timer = 0f;                // Acumula el tiempo transcurrido
+        private float timer = 0f;
 
         void Update()
         {
-            // Controla el tiempo de vida de la bala
             timer += Time.deltaTime;
             if (timer >= lifetime)
             {
-                DestroyBullet(); // Se destruye al superar el tiempo, con explosión
+                DestroyBullet(); 
             }
         }
 
 
         void OnTriggerEnter(Collider other)
         {
-            
+            HandleImpact();
             DestroyBullet();
+        }
+
+        private void HandleImpact()
+        {
+            
+            AudioClip randomSound = impactSounds[Random.Range(0, impactSounds.Length)];
+            AudioSource.PlayClipAtPoint(randomSound, transform.position);
             
         }
 
-        /// <summary>
-        /// Destruye la bala e instancia la explosión (si existe el prefab).
-        /// </summary>
         private void DestroyBullet()
         {
             if (explosionVfx != null)

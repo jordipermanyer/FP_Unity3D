@@ -283,6 +283,9 @@ MonoBehaviour:
   shootingRadius: 5
   ammoBoxPrefab: {fileID: 5470032031343734745, guid: f06967cc99bda5041bb6beaa6237f583, type: 3}
   ammoBoxHeight: 1
+  missSound:
+  - {fileID: 8300000, guid: 4c9413710049a684b965d4fd979f5f74, type: 3}
+  - {fileID: 8300000, guid: 9b100904174399446a179b6269d92b85, type: 3}
 --- !u!195 &814479946
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -80,6 +80,8 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
 
         private void GameOver()
         {
+            StartCoroutine(DelayedGameOver());
+            /*
             PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
             {
                 { "IsAlive", true }
@@ -87,8 +89,19 @@ namespace UVic.jordipermanyerandalbertelgstrom.Vgame3D.fps
             
             PhotonNetwork.LeaveRoom();
 
-            PhotonNetwork.LoadLevel("FinalScreen");
+            PhotonNetwork.LoadLevel("FinalScreen");*/
 
+        }
+        private IEnumerator DelayedGameOver()
+        {
+            yield return new WaitForSeconds(2.0f);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
+            {
+                { "IsAlive", true }
+            });
+
+            PhotonNetwork.LeaveRoom();
+            PhotonNetwork.LoadLevel("FinalScreen");
         }
 
 

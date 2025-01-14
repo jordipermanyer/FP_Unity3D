@@ -132,6 +132,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lifetime: 10
   explosionVfx: {fileID: 100004, guid: 6e8c7c425e5bc374daf95a774767b1e3, type: 3}
+  impactSounds:
+  - {fileID: 8300000, guid: c2a08a7ad5209f64aa4807586fb38129, type: 3}
+  - {fileID: 8300000, guid: bce3c7bd63ab35848ae7bada21fca4c7, type: 3}
 --- !u!54 &8043531729142960167
 Rigidbody:
   m_ObjectHideFlags: 0
